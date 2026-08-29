@@ -1,0 +1,41 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07080A"/>
+      <stop offset="0.68" stop-color="#0B0E12"/>
+      <stop offset="1" stop-color="#071419"/>
+    </linearGradient>
+    <linearGradient id="track" x1="770" y1="126" x2="1093" y2="502" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#39E7F2"/>
+      <stop offset="0.56" stop-color="#F7F2E8"/>
+      <stop offset="1" stop-color="#FF3045"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1035 133) rotate(135) scale(440 330)">
+      <stop stop-color="#39E7F2" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="#39E7F2" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="230" height="7" fill="#FF3045"/>
+  <rect x="230" width="970" height="1" fill="#F7F2E8" fill-opacity="0.16"/>
+  <path d="M70 72H98L84 91H56L70 72Z" fill="#FF3045"/>
+  <text x="106" y="94" fill="#F7F2E8" font-family="Arial, sans-serif" font-size="42" font-style="italic" font-weight="900" letter-spacing="-2">VMAX</text>
+  <text x="62" y="173" fill="#39E7F2" font-family="monospace" font-size="15" font-weight="700" letter-spacing="2">The JouleIQ approach</text>
+  <text x="58" y="291" fill="#F7F2E8" font-family="Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-4">ENERGY HAS</text>
+  <text x="58" y="377" fill="#39E7F2" font-family="Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-4">FUTURE VALUE.</text>
+  <text x="64" y="440" fill="#A8B0B5" font-family="Arial, sans-serif" font-size="23">Price what a joule buys now against what it unlocks later.</text>
+  <path d="M785 155C844 92 1001 100 1073 162C1132 213 1095 274 1028 284C969 293 1012 390 934 462C858 532 737 470 750 372C759 308 826 286 823 232C821 186 752 193 785 155Z" stroke="#222A30" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M785 155C844 92 1001 100 1073 162C1132 213 1095 274 1028 284C969 293 1012 390 934 462C858 532 737 470 750 372C759 308 826 286 823 232C821 186 752 193 785 155Z" stroke="url(#track)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 17" filter="url(#soft)"/>
+  <path d="M786 155C853 105 993 108 1062 164" stroke="#FF3045" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="787" cy="155" r="14" fill="#07080A" stroke="#39E7F2" stroke-width="5"/>
+  <circle cx="1062" cy="164" r="13" fill="#FF3045"/>
+  <path d="M815 338C875 286 965 283 1036 346" stroke="#39444A" stroke-width="3"/>
+  <path d="M815 338C875 306 953 303 1023 342" stroke="#39E7F2" stroke-width="5" stroke-linecap="round"/>
+  <path d="M1020 332L1041 347L1018 354Z" fill="#39E7F2"/>
+  <text x="925" y="267" fill="#A8B0B5" font-family="monospace" font-size="13" text-anchor="middle" letter-spacing="2">NOW VS LATER</text>
+</svg>
