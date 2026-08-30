@@ -61,9 +61,9 @@ export default function Home() {
           </div>
           <div
             className="hero-model-label"
-            aria-label="Interactive race car model"
+            aria-label="Interactive Formula 1 concept car model"
           >
-            <span>3D system model</span>
+            <span>F1 concept model</span>
             <strong>V/JQ-01</strong>
             <small>Scroll controlled · WebGL</small>
           </div>

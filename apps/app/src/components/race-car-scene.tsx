@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+import { createF1CarModel } from "@/components/f1-car-model";
 
 const groundVertexShader = `
   varying vec2 vUv;
@@ -102,17 +103,19 @@ export function RaceCarScene() {
       powerPreference: "high-performance",
     });
     const carRig = new THREE.Group();
-    const wheelMeshes: THREE.Object3D[] = [];
+    const wheelMeshes: THREE.Group[] = [];
     const pointerTarget = new THREE.Vector2();
     const pointer = new THREE.Vector2();
     const lookTarget = new THREE.Vector3();
-    let model: THREE.Object3D | null = null;
     let frame = 0;
     let visible = true;
     let disposed = false;
     let targetProgress = 0;
     let progress = 0;
     let elapsed = 0;
+    let compact = window.innerWidth < 560;
+    let modelScale = 0.72;
+    let viewportWidth = window.innerWidth;
     let previousTime = performance.now();
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -168,6 +171,11 @@ export function RaceCarScene() {
     shadow.position.y = -0.6;
     carRig.add(shadow);
 
+    const { root: model, wheels } = createF1CarModel();
+    wheelMeshes.push(...wheels);
+    carRig.add(model);
+    setStatus("ready");
+
     const resize = () => {
       const width = Math.max(host.clientWidth, 1);
       const height = Math.max(host.clientHeight, 1);
@@ -179,6 +187,15 @@ export function RaceCarScene() {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      viewportWidth = window.innerWidth;
+      compact = viewportWidth < 560;
+      modelScale = compact
+        ? 0.5
+        : viewportWidth < 900
+          ? 0.56
+          : viewportWidth < 1200
+            ? 0.64
+            : 0.72;
     };
 
     const updateProgress = () => {
@@ -204,8 +221,29 @@ export function RaceCarScene() {
       progress = THREE.MathUtils.lerp(progress, targetProgress, ease);
       pointer.lerp(pointerTarget, ease * 0.72);
 
+      const startX = compact
+        ? 0.26
+        : viewportWidth < 900
+          ? 0.7
+          : viewportWidth < 1200
+            ? 0.8
+            : 1.78;
+      const endX = compact
+        ? -0.34
+        : viewportWidth < 900
+          ? -0.35
+          : viewportWidth < 1200
+            ? -0.3
+            : 0.78;
+      const footprintScale = THREE.MathUtils.lerp(
+        1,
+        compact ? 0.92 : 0.84,
+        Math.sin(progress * Math.PI),
+      );
+      model.scale.setScalar(modelScale * footprintScale);
+
       carRig.position.set(
-        THREE.MathUtils.lerp(0.82, -0.18, progress) + pointer.x * 0.16,
+        THREE.MathUtils.lerp(startX, endX, progress) + pointer.x * 0.16,
         -0.02 + Math.sin(elapsed * 1.2) * 0.018,
         THREE.MathUtils.lerp(0.1, 0.5, progress),
       );
@@ -280,50 +318,8 @@ export function RaceCarScene() {
     resize();
     updateProgress();
 
-    new GLTFLoader()
-      .loadAsync("/models/race-future.glb")
-      .then((gltf) => {
-        if (disposed) {
-          disposeObject(gltf.scene);
-          return;
-        }
-
-        model = gltf.scene;
-        const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-        const maxDimension = Math.max(size.x, size.y, size.z);
-        model.position.sub(center);
-        model.scale.setScalar(3.45 / maxDimension);
-        model.traverse((child) => {
-          if (!(child instanceof THREE.Mesh)) return;
-          const materials = Array.isArray(child.material)
-            ? child.material
-            : [child.material];
-          const updatedMaterials = materials.map((material) => {
-            const updated = material.clone();
-            if (updated instanceof THREE.MeshStandardMaterial) {
-              updated.roughness = 0.34;
-              updated.metalness = 0.18;
-              updated.envMapIntensity = 0.65;
-            }
-            return updated;
-          });
-          child.material = Array.isArray(child.material)
-            ? updatedMaterials
-            : updatedMaterials[0];
-          if (child.name.toLowerCase().includes("wheel")) {
-            wheelMeshes.push(child);
-          }
-        });
-        carRig.add(model);
-        setStatus("ready");
-        if (reduceMotion) render();
-        else start();
-      })
-      .catch(() => {
-        if (!disposed) setStatus("failed");
-      });
+    if (reduceMotion) render();
+    else start();
 
     return () => {
       disposed = true;

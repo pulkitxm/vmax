@@ -154,7 +154,7 @@ a {
 .race-car-scene {
   position: absolute;
   z-index: 0;
-  inset: 0 -4% 0 30%;
+  inset: 0 -4% 0 0;
   pointer-events: none;
 }
 
@@ -1860,7 +1860,7 @@ a {
   }
 
   .race-car-scene {
-    inset: 0 -20% 0 25%;
+    inset: 18% -20% -6% -8%;
   }
 
   .hero-kicker {
@@ -1951,7 +1951,7 @@ a {
 
   .race-car-scene {
     inset: 25% -40% -8% -18%;
-    opacity: 0.76;
+    opacity: 0.9;
   }
 
   .hero-kicker {
