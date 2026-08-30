@@ -3,13 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
-import {
-  createKartModel,
-  type KartPalette,
-} from "@/components/kart-model";
+import { createKartModel } from "@/components/kart-model";
 
 type KartLayout = {
-  palette: KartPalette;
   position: [number, number, number];
   rotation: number;
   scale: number;
@@ -18,54 +14,26 @@ type KartLayout = {
 
 const kartLayouts: KartLayout[] = [
   {
-    palette: {
-      paint: 0x147df5,
-      accent: 0xff3648,
-      suit: 0xf7f2e8,
-      helmet: 0xf1354a,
-      visor: 0x14242b,
-    },
     position: [1.34, -0.06, 0.82],
-    rotation: -0.44,
+    rotation: 0.38,
     scale: 0.7,
     phase: 0.2,
   },
   {
-    palette: {
-      paint: 0x147df5,
-      accent: 0xff3648,
-      suit: 0x203845,
-      helmet: 0xf7f2e8,
-      visor: 0x0e2e37,
-    },
     position: [-0.48, 0.05, -0.88],
-    rotation: -0.18,
+    rotation: 0.22,
     scale: 0.56,
     phase: 1.8,
   },
   {
-    palette: {
-      paint: 0x147df5,
-      accent: 0xff3648,
-      suit: 0x2c2530,
-      helmet: 0xf4b942,
-      visor: 0x241a26,
-    },
     position: [2.86, 0.08, -1.05],
     rotation: -0.66,
     scale: 0.56,
     phase: 3.4,
   },
   {
-    palette: {
-      paint: 0x147df5,
-      accent: 0xff3648,
-      suit: 0x29203f,
-      helmet: 0xa991ff,
-      visor: 0x171225,
-    },
     position: [1.38, 0.15, -2.5],
-    rotation: -0.39,
+    rotation: 0.08,
     scale: 0.49,
     phase: 5,
   },
@@ -171,7 +139,7 @@ export function KartRaceScene() {
     const formation = new THREE.Group();
     const kartStates = kartLayouts.map((layout) => {
       const rig = new THREE.Group();
-      const model = createKartModel(layout.palette);
+      const model = createKartModel();
       const shadow = new THREE.Mesh(
         new THREE.PlaneGeometry(2.5, 3.2),
         new THREE.ShaderMaterial({
