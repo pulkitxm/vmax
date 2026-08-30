@@ -13,6 +13,7 @@ const fragmentSource = `
   precision highp float;
   uniform vec2 resolution;
   uniform float time;
+  uniform float scroll;
   uniform vec2 pointer;
 
   float line(vec2 p, float width) {
@@ -24,7 +25,7 @@ const fragmentSource = `
     vec2 mouse = pointer * 0.18;
     uv -= mouse;
     float t = time * 0.22;
-    float curve = sin(uv.x * 2.7 + t) * 0.2 + sin(uv.x * 5.1 - t * 1.4) * 0.055;
+    float curve = sin(uv.x * 2.7 + t + scroll * 2.4) * 0.2 + sin(uv.x * 5.1 - t * 1.4) * 0.055;
     float energy = line(vec2(uv.x, uv.y - curve), 0.018);
     float halo = line(vec2(uv.x, uv.y - curve), 0.16) * 0.2;
     float pulse = 0.55 + 0.45 * sin(uv.x * 7.0 - time * 1.1);
@@ -88,6 +89,7 @@ export function HeroShader() {
     const position = gl.getAttribLocation(program, "position");
     const resolution = gl.getUniformLocation(program, "resolution");
     const time = gl.getUniformLocation(program, "time");
+    const scroll = gl.getUniformLocation(program, "scroll");
     const pointer = gl.getUniformLocation(program, "pointer");
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -122,6 +124,7 @@ export function HeroShader() {
       gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
       gl.uniform2f(resolution, canvas.width, canvas.height);
       gl.uniform1f(time, reduceMotion ? 4 : now * 0.001);
+      gl.uniform1f(scroll, window.scrollY / Math.max(window.innerHeight, 1));
       gl.uniform2f(pointer, current.x, current.y);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       if (!reduceMotion && visible) frame = requestAnimationFrame(render);
