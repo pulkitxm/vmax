@@ -262,6 +262,11 @@ export function Dashboard() {
   ]);
   const timers = useRef<number[]>([]);
 
+  const clearTimers = useCallback(() => {
+    timers.current.forEach((timer) => window.clearTimeout(timer));
+    timers.current = [];
+  }, []);
+
   const addEvent = useCallback((kind: EventEntry["kind"], message: string) => {
     setEvents((current) =>
       [{ id: Date.now(), time: timeLabel(), kind, message }, ...current].slice(
@@ -280,8 +285,8 @@ export function Dashboard() {
   }, [playbackSpeed, running]);
 
   useEffect(() => {
-    return () => timers.current.forEach((timer) => window.clearTimeout(timer));
-  }, []);
+    return clearTimers;
+  }, [clearTimers]);
 
   useEffect(() => {
     if (!toast) return;
@@ -344,6 +349,8 @@ export function Dashboard() {
   const time = `14:${String(32 + frameIndex).padStart(2, "0")}.${frameIndex * 17}`;
 
   const setPreset = (key: ScenarioKey) => {
+    clearTimers();
+    setIsComputing(false);
     const next = presets[key];
     setScenarioKey(key);
     setScenario(next);
@@ -360,12 +367,16 @@ export function Dashboard() {
     field: "gap" | "energy" | "detection",
     value: number,
   ) => {
+    clearTimers();
+    setIsComputing(false);
     setScenario((current) => ({ ...current, [field]: value }));
     setManualAction(null);
     setDispatchStage("idle");
   };
 
   const changeFault = (next: FaultMode) => {
+    clearTimers();
+    setIsComputing(false);
     setFault(next);
     setDispatchStage("idle");
     setManualAction(null);
@@ -380,6 +391,7 @@ export function Dashboard() {
   };
 
   const recompute = () => {
+    clearTimers();
     setIsComputing(true);
     setAnalysisRun((current) => current + 512);
     addEvent("decision", "Counterfactual planner started 512 matched futures");
@@ -395,8 +407,8 @@ export function Dashboard() {
   };
 
   const dispatch = () => {
-    timers.current.forEach((timer) => window.clearTimeout(timer));
-    timers.current = [];
+    clearTimers();
+    setIsComputing(false);
     if (fault === "telemetry") {
       setDispatchStage("blocked");
       addEvent(
