@@ -3,28 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#050608">
-  <meta name="description" content="JouleIQ competition presentation">
-  <title>JouleIQ | Race Intelligence</title>
+  <meta name="theme-color" content="#07080a">
+  <meta name="description" content="Vmax presents the JouleIQ approach to energy-aware race strategy.">
+  <meta property="og:title" content="Vmax | Energy-Aware Race Strategy">
+  <meta property="og:description" content="How Vmax prices the future value of energy to make explainable race-strategy decisions.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vmax.pulkit.page/presentation">
+  <meta property="og:image" content="https://vmax.pulkit.page/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Vmax energy-aware race strategy">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Vmax | Energy-Aware Race Strategy">
+  <meta name="twitter:description" content="The JouleIQ approach helps Vmax decide when energy is worth more now and when it is worth saving for later.">
+  <meta name="twitter:image" content="https://vmax.pulkit.page/og-image.png">
+  <link rel="canonical" href="https://vmax.pulkit.page/presentation">
+  <title>Vmax | The JouleIQ Approach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700;900&family=Roboto+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <style>
     :root {
-      --ink: #050608;
-      --ink-raised: #0b0e12;
-      --panel: #11161b;
-      --panel-soft: #171d22;
-      --line: rgba(248, 242, 231, 0.14);
-      --line-strong: rgba(248, 242, 231, 0.28);
-      --paper: #f8f2e7;
-      --muted: #aeb8bd;
-      --red: #ff2d3f;
-      --red-dark: #8d0d1e;
-      --cyan: #33efff;
-      --cyan-soft: rgba(51, 239, 255, 0.16);
-      --amber: #ffc857;
-      --green: #66f2ad;
-      --display: "Arial Narrow", "Roboto Condensed", "Bahnschrift Condensed", "Helvetica Neue", Arial, sans-serif;
-      --mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --black: #07080a;
+      --surface: #101318;
+      --surface-soft: #15191e;
+      --white: #f7f2e8;
+      --muted: #a8b0b5;
+      --line: rgba(247, 242, 232, 0.15);
+      --red: #ff3045;
+      --cyan: #39e7f2;
+      --amber: #f4c35a;
+      --green: #64dfa4;
+      --display: "Roboto Condensed", "Arial Narrow", "Liberation Sans Narrow", "Bahnschrift Condensed", Arial, sans-serif;
+      --mono: "Roboto Mono", "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
     }
 
     * {
@@ -37,37 +49,17 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
-      background: var(--ink);
-    }
-
-    body {
-      color: var(--paper);
+      background: var(--black);
     }
 
     .reveal {
-      color: var(--paper);
+      color: var(--white);
       font-family: var(--display);
       font-size: 24px;
       background:
-        radial-gradient(circle at 76% 20%, rgba(51, 239, 255, 0.08), transparent 28%),
-        radial-gradient(circle at 14% 86%, rgba(255, 45, 63, 0.09), transparent 32%),
-        var(--ink);
-    }
-
-    .reveal::before {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      content: "";
-      pointer-events: none;
-      opacity: 0.28;
-      background-image:
-        linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%),
-        linear-gradient(-45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.025) 75%),
-        linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.025) 75%);
-      background-position: 0 0, 0 9px, 9px -9px, -9px 0;
-      background-size: 18px 18px;
+        radial-gradient(circle at 88% 12%, rgba(57, 231, 242, 0.07), transparent 30%),
+        radial-gradient(circle at 8% 92%, rgba(255, 48, 69, 0.08), transparent 31%),
+        var(--black);
     }
 
     .reveal .slides {
@@ -75,37 +67,28 @@
     }
 
     .reveal .slides > section {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      min-height: 0;
-      padding: 26px 34px 16px;
-      overflow: hidden;
-      color: var(--paper);
-      background:
-        linear-gradient(112deg, rgba(255, 255, 255, 0.018), transparent 34%),
-        linear-gradient(180deg, rgba(5, 6, 8, 0.5), rgba(5, 6, 8, 0.94));
-    }
-
-    .reveal .slides > section::before {
       position: absolute;
       top: 0;
       left: 0;
-      width: 29%;
-      height: 4px;
-      content: "";
-      background: var(--red);
-      box-shadow: 0 0 22px rgba(255, 45, 63, 0.45);
+      width: 100%;
+      height: 100%;
+      padding: 25px 38px 22px;
+      overflow: hidden;
+      color: var(--white);
+      background: linear-gradient(118deg, rgba(255, 255, 255, 0.018), transparent 35%);
     }
 
     .reveal .slides > section::after {
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 70%;
-      height: 1px;
+      right: -120px;
+      bottom: -165px;
+      width: 400px;
+      height: 250px;
       content: "";
-      background: linear-gradient(90deg, transparent, rgba(51, 239, 255, 0.72));
+      border: 1px solid rgba(57, 231, 242, 0.07);
+      border-radius: 50%;
+      transform: rotate(-12deg);
+      pointer-events: none;
     }
 
     .reveal h1,
@@ -114,940 +97,496 @@
     .reveal p,
     .reveal figure,
     .reveal ol,
-    .reveal ul,
-    .reveal table {
+    .reveal table,
+    .reveal blockquote {
       margin: 0;
     }
 
     .reveal h1,
     .reveal h2,
     .reveal h3 {
-      color: var(--paper);
+      color: var(--white);
       font-family: var(--display);
-      font-weight: 800;
+      font-weight: 850;
       letter-spacing: -0.035em;
-      line-height: 0.94;
+      line-height: 0.96;
       text-transform: uppercase;
     }
 
     .reveal h1 {
-      max-width: 610px;
-      font-size: 59px;
+      max-width: 560px;
+      font-size: 61px;
     }
 
     .reveal h2 {
-      font-size: 43px;
+      max-width: 720px;
+      font-size: 47px;
     }
 
     .reveal h3 {
-      font-size: 24px;
-      letter-spacing: -0.015em;
+      font-size: 25px;
       line-height: 1;
     }
 
-    .reveal strong {
-      color: var(--paper);
-    }
-
-    .reveal .accent {
-      color: var(--red);
-    }
-
-    .reveal .cyan {
-      color: var(--cyan);
-    }
-
-    .reveal .amber {
-      color: var(--amber);
-    }
-
-    .topline {
+    .topbar {
       position: relative;
       z-index: 2;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      min-height: 23px;
-      padding-bottom: 9px;
+      height: 30px;
       border-bottom: 1px solid var(--line);
     }
 
-    .brand-mark {
+    .topbar::before {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 58px;
+      height: 3px;
+      content: "";
+      background: var(--red);
+    }
+
+    .vmax {
       display: inline-flex;
-      align-items: baseline;
-      gap: 4px;
-      font-size: 19px;
+      align-items: center;
+      gap: 7px;
+      color: var(--white);
+      font-size: 21px;
       font-style: italic;
       font-weight: 900;
-      letter-spacing: -0.055em;
+      letter-spacing: -0.065em;
       line-height: 1;
     }
 
-    .brand-mark span:first-child {
-      color: var(--paper);
-    }
-
-    .brand-mark span:last-child {
-      color: var(--cyan);
-    }
-
-    .brand-mark::before {
-      width: 17px;
+    .vmax::before {
+      width: 13px;
       height: 7px;
       content: "";
       background: var(--red);
-      clip-path: polygon(22% 0, 100% 0, 78% 100%, 0 100%);
+      clip-path: polygon(20% 0, 100% 0, 80% 100%, 0 100%);
     }
 
-    .telemetry-meta {
-      display: flex;
-      gap: 18px;
+    .page-no {
       color: var(--muted);
       font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
+      font-size: 9px;
+      letter-spacing: 0.11em;
     }
 
-    .telemetry-meta span:last-child {
-      color: var(--cyan);
-    }
-
-    .section-head {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 22px;
-      align-items: end;
-      margin-top: 15px;
-    }
-
-    .section-head .subtitle {
-      align-self: end;
-      max-width: 350px;
-      padding-bottom: 2px;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.3;
-      text-align: right;
-    }
-
-    .kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px !important;
+    .approach-label {
+      margin-bottom: 14px !important;
       color: var(--cyan);
       font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .kicker::before {
-      width: 22px;
-      height: 2px;
-      content: "";
-      background: var(--cyan);
-      box-shadow: 0 0 10px rgba(51, 239, 255, 0.65);
-    }
-
-    .slide-id {
-      position: absolute;
-      top: 46px;
-      right: 27px;
-      z-index: 0;
-      color: rgba(248, 242, 231, 0.032);
-      font-family: var(--mono);
-      font-size: 124px;
-      font-weight: 900;
-      letter-spacing: -0.1em;
-      line-height: 1;
-      pointer-events: none;
-    }
-
-    .cut-panel {
-      position: relative;
-      border: 1px solid var(--line);
-      background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.04), transparent 42%),
-        rgba(13, 17, 21, 0.93);
-      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
-    }
-
-    .cut-panel::after {
-      position: absolute;
-      top: 0;
-      right: 18px;
-      width: 56px;
-      height: 2px;
-      content: "";
-      background: var(--cyan);
-      box-shadow: 0 0 10px rgba(51, 239, 255, 0.45);
-    }
-
-    .mono-label {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 8px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
-    .micro-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 8px;
-      color: var(--muted);
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.025);
-      font-family: var(--mono);
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .micro-tag::before {
-      width: 5px;
-      height: 5px;
+    .approach-label::before {
+      display: inline-block;
+      width: 24px;
+      height: 2px;
+      margin-right: 9px;
       content: "";
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 8px rgba(102, 242, 173, 0.8);
+      vertical-align: middle;
+      background: currentColor;
     }
 
-    .hero-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.42fr) minmax(0, 0.78fr);
-      gap: 30px;
-      align-items: stretch;
-      height: 354px;
-      margin-top: 20px;
-    }
-
-    .hero-copy {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      padding-top: 12px;
-    }
-
-    .hero-copy h1 span {
-      color: var(--cyan);
-    }
-
-    .hero-lead {
-      max-width: 555px;
-      margin-top: 17px !important;
-      color: #c8d0d1;
-      font-size: 18px;
+    .lead {
+      color: #c7cdd0;
+      font-size: 19px;
       line-height: 1.35;
     }
 
-    .positioning {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) 34px auto minmax(0, 1.25fr);
-      gap: 8px;
-      align-items: center;
-      margin-top: auto;
-      padding: 12px 14px;
-      border-left: 3px solid var(--red);
-      background: linear-gradient(90deg, rgba(255, 45, 63, 0.12), rgba(51, 239, 255, 0.05));
-      font-size: 13px;
-      line-height: 1.15;
-      text-transform: uppercase;
-    }
-
-    .positioning .not,
-    .positioning .is {
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.12em;
-    }
-
-    .positioning .not {
+    .accent {
       color: var(--red);
     }
 
-    .positioning .is {
+    .cyan {
       color: var(--cyan);
     }
 
-    .positioning .position-arrow {
-      color: var(--line-strong);
-      font-family: var(--mono);
-      text-align: center;
+    .section-heading {
+      margin-top: 24px;
     }
 
-    .track-panel {
-      display: flex;
-      flex-direction: column;
+    .section-heading p {
+      max-width: 680px;
+      margin-top: 11px !important;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+      gap: 54px;
+      align-items: center;
+      height: 435px;
+    }
+
+    .intro-copy {
       min-width: 0;
-      padding: 14px 15px 12px;
     }
 
-    .track-panel figcaption {
+    .intro-copy .lead {
+      max-width: 540px;
+      margin-top: 21px !important;
+    }
+
+    .human-note {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 4px;
+      gap: 10px;
+      margin-top: 27px !important;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .track-panel svg {
+    .human-note::before {
+      width: 8px;
+      height: 8px;
+      content: "";
+      border: 2px solid var(--green);
+      border-radius: 50%;
+    }
+
+    .core-visual {
+      position: relative;
+      min-width: 0;
+      height: 334px;
+      border-left: 1px solid var(--line);
+    }
+
+    .core-visual svg {
       display: block;
       width: 100%;
-      max-width: 100%;
-      height: 242px;
-      overflow: visible;
+      height: 100%;
     }
 
-    .track-stats {
+    .value-layout {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
-      margin-top: auto;
-    }
-
-    .track-stat {
-      min-width: 0;
-      padding: 7px 6px 6px;
-      border-top: 1px solid var(--line);
-    }
-
-    .track-stat b {
-      display: block;
-      color: var(--paper);
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 1;
-    }
-
-    .track-stat span {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 6px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .mode-rail {
-      position: absolute;
-      right: 34px;
-      bottom: 17px;
-      left: 34px;
-      display: grid;
-      grid-template-columns: 78px repeat(6, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+      gap: 42px;
       align-items: center;
-      height: 27px;
+      height: 326px;
+      margin-top: 18px;
+    }
+
+    .value-principle {
+      min-width: 0;
+    }
+
+    .value-principle > p {
+      color: #c7cdd0;
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .outcome-line {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 11px;
+      margin-top: 24px;
+      padding-top: 13px;
       border-top: 1px solid var(--line);
     }
 
-    .mode-rail .rail-label {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 7px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+    .outcome-line + .outcome-line {
+      margin-top: 14px;
     }
 
-    .mode {
-      position: relative;
-      color: #7c898f;
+    .outcome-line strong {
+      color: var(--red);
       font-family: var(--mono);
-      font-size: 7px;
+      font-size: 10px;
       letter-spacing: 0.08em;
-      text-align: center;
       text-transform: uppercase;
     }
 
-    .mode::before {
+    .outcome-line.good strong {
+      color: var(--cyan);
+    }
+
+    .outcome-line span {
+      color: var(--white);
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .value-chart {
+      min-width: 0;
+      height: 294px;
+      padding-left: 25px;
+      border-left: 1px solid var(--line);
+    }
+
+    .value-chart svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .question-line {
       position: absolute;
-      top: -7px;
-      left: 50%;
-      width: 4px;
-      height: 4px;
-      content: "";
-      border: 1px solid #596268;
-      border-radius: 50%;
-      background: var(--ink);
-      transform: translateX(-50%);
+      right: 38px;
+      bottom: 28px;
+      left: 38px;
+      color: var(--white);
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.2;
     }
 
-    .mode.active {
-      color: var(--paper);
+    .question-line span {
+      color: var(--cyan);
     }
 
-    .mode.active::before {
-      border-color: var(--red);
-      background: var(--red);
-      box-shadow: 0 0 9px rgba(255, 45, 63, 0.8);
-    }
-
-    .architecture-wrap {
-      position: relative;
-      margin-top: 21px;
-      padding: 22px 16px 13px;
-    }
-
-    .architecture-wrap::before {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      height: 3px;
-      content: "";
-      background: linear-gradient(90deg, var(--red) 0 18%, var(--cyan) 18% 82%, var(--paper) 82% 100%);
-    }
-
-    .pipeline {
+    .system-flow {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
+      margin-top: 43px !important;
       padding: 0;
       list-style: none;
     }
 
-    .pipeline li {
+    .system-flow li {
       position: relative;
       min-width: 0;
-      height: 137px;
-      padding: 12px 10px 10px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.025);
+      height: 214px;
+      padding: 21px 16px;
+      border-top: 2px solid var(--step-color, var(--line));
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012));
     }
 
-    .pipeline li:not(:last-child)::after {
+    .system-flow li:not(:last-child)::after {
       position: absolute;
       top: 50%;
-      right: -14px;
-      z-index: 3;
-      width: 14px;
+      right: -15px;
+      z-index: 2;
+      width: 15px;
       height: 1px;
       content: "";
       background: var(--cyan);
-      box-shadow: 0 0 7px rgba(51, 239, 255, 0.6);
     }
 
-    .pipeline li:not(:last-child)::before {
-      position: absolute;
-      top: calc(50% - 3px);
-      right: -15px;
-      z-index: 4;
-      width: 0;
-      height: 0;
-      content: "";
-      border-top: 3px solid transparent;
-      border-bottom: 3px solid transparent;
-      border-left: 5px solid var(--cyan);
+    .system-flow li:nth-child(1) {
+      --step-color: var(--red);
     }
 
-    .pipeline li.reference {
-      border-top: 2px solid var(--red);
+    .system-flow li:nth-child(2),
+    .system-flow li:nth-child(3) {
+      --step-color: var(--cyan);
     }
 
-    .pipeline li.advice {
-      border-top: 2px solid var(--green);
-      background: linear-gradient(160deg, rgba(102, 242, 173, 0.09), rgba(255, 255, 255, 0.025));
+    .system-flow li:nth-child(4) {
+      --step-color: var(--green);
     }
 
-    .node-no {
+    .step-no {
       display: block;
-      margin-bottom: 12px;
-      color: #6d787e;
+      margin-bottom: 35px;
+      color: var(--step-color);
       font-family: var(--mono);
-      font-size: 8px;
-    }
-
-    .pipeline h3 {
-      min-height: 42px;
-      font-size: 17px;
-      line-height: 1.05;
-    }
-
-    .pipeline p {
-      margin-top: 9px !important;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 8px;
-      line-height: 1.35;
-    }
-
-    .architecture-lanes {
-      display: grid;
-      grid-template-columns: 1.14fr 1fr;
-      gap: 10px;
-      margin-top: 13px;
-    }
-
-    .lane {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-width: 0;
-      padding: 9px 12px;
-      border: 1px solid var(--line);
-      background: rgba(5, 6, 8, 0.55);
-    }
-
-    .lane .lane-title {
-      color: var(--cyan);
-      font-family: var(--mono);
-      font-size: 8px;
+      font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
     }
 
-    .lane .lane-flow {
-      color: var(--paper);
-      font-size: 11px;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+    .system-flow h3 {
+      font-size: 25px;
     }
 
-    .lane .lane-flow span {
-      color: var(--red);
-      padding: 0 6px;
-      font-family: var(--mono);
-    }
-
-    .architecture-proof {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .architecture-proof article {
-      min-width: 0;
-      padding: 10px 12px;
-      border-left: 2px solid var(--line-strong);
-      background: rgba(255, 255, 255, 0.018);
-    }
-
-    .architecture-proof article:nth-child(2) {
-      border-color: var(--cyan);
-    }
-
-    .architecture-proof article:nth-child(3) {
-      border-color: var(--red);
-    }
-
-    .architecture-proof strong {
-      display: block;
-      font-size: 15px;
-      line-height: 1.05;
-      text-transform: uppercase;
-    }
-
-    .architecture-proof span {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 10px;
-      line-height: 1.2;
-    }
-
-    .scenario-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
-      gap: 18px;
-      height: 347px;
-      margin-top: 18px;
-    }
-
-    .detection-panel {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      padding: 16px;
-    }
-
-    .session-line {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .session-line strong {
-      color: var(--green);
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.08em;
-    }
-
-    .gap-readout {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-top: 14px;
-    }
-
-    .gap-readout .gap-value {
-      color: var(--paper);
-      font-family: var(--mono);
-      font-size: 43px;
-      font-weight: 800;
-      letter-spacing: -0.08em;
-      line-height: 0.9;
-    }
-
-    .gap-readout .gap-value span {
-      margin-left: 4px;
+    .system-flow p {
+      margin-top: 13px !important;
       color: var(--muted);
       font-size: 14px;
-      letter-spacing: 0;
+      line-height: 1.32;
     }
 
-    .gap-readout .threshold {
-      color: var(--red);
-      font-family: var(--mono);
-      font-size: 9px;
-      text-align: right;
-      text-transform: uppercase;
-    }
-
-    .track-window {
-      position: relative;
-      height: 116px;
-      margin-top: 12px;
-      overflow: hidden;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background:
-        linear-gradient(90deg, transparent 0 73%, rgba(255, 45, 63, 0.1) 73% 74%, transparent 74%),
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 38px);
-    }
-
-    .track-window::before {
-      position: absolute;
-      top: 57px;
-      right: 12px;
-      left: 12px;
-      height: 2px;
-      content: "";
-      background: linear-gradient(90deg, #535f64, var(--paper) 70%, var(--red));
-    }
-
-    .detection-line {
-      position: absolute;
-      top: 8px;
-      bottom: 8px;
-      left: 74%;
-      width: 2px;
-      background: var(--red);
-      box-shadow: 0 0 12px rgba(255, 45, 63, 0.65);
-    }
-
-    .detection-line span {
-      position: absolute;
-      top: 3px;
-      left: 6px;
-      color: var(--red);
-      font-family: var(--mono);
-      font-size: 7px;
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-      text-transform: uppercase;
-    }
-
-    .car-marker {
-      position: absolute;
-      top: 47px;
-      left: 18%;
-      width: 43px;
-      height: 21px;
-      background: var(--cyan);
-      clip-path: polygon(13% 26%, 72% 26%, 82% 0, 92% 0, 90% 30%, 100% 42%, 95% 78%, 74% 80%, 67% 100%, 22% 100%, 16% 80%, 0 74%, 0 42%);
-      filter: drop-shadow(0 0 7px rgba(51, 239, 255, 0.55));
-    }
-
-    .car-marker::after {
-      position: absolute;
-      top: 7px;
-      right: 8px;
-      width: 11px;
-      height: 4px;
-      content: "";
-      background: var(--ink);
-    }
-
-    .distance-label {
-      position: absolute;
-      bottom: 7px;
-      left: 24%;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 7px;
-    }
-
-    .decision-ticket {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-      margin-top: auto;
-      padding: 11px 12px;
-      border-left: 3px solid var(--red);
-      background: linear-gradient(90deg, rgba(255, 45, 63, 0.13), rgba(255, 45, 63, 0.025));
-    }
-
-    .decision-ticket strong {
-      display: block;
-      color: var(--paper);
-      font-size: 19px;
-      font-style: italic;
-      letter-spacing: -0.02em;
-      text-transform: uppercase;
-    }
-
-    .decision-ticket span {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 8px;
-    }
-
-    .decision-ticket .energy-cost {
-      color: var(--cyan);
-      font-family: var(--mono);
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.05em;
-    }
-
-    .eligibility-panel {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      padding: 16px 18px;
-    }
-
-    .eligibility-title {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .eligibility-title strong {
-      display: block;
-      font-size: 23px;
-      letter-spacing: -0.025em;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-
-    .eligibility-title span {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 8px;
-      line-height: 1.35;
-      text-align: right;
-      text-transform: uppercase;
-    }
-
-    .probability-bars {
-      display: grid;
-      gap: 14px;
-      margin-top: 20px;
-    }
-
-    .prob-row {
-      display: grid;
-      grid-template-columns: 103px minmax(0, 1fr) 48px;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .prob-name {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 700;
-      line-height: 1.1;
-      text-transform: uppercase;
-    }
-
-    .prob-track {
-      position: relative;
-      height: 25px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.028);
-    }
-
-    .prob-track::after {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 1px;
-      content: "";
-      background: rgba(248, 242, 231, 0.13);
-    }
-
-    .prob-fill {
-      width: calc(var(--value) * 100%);
-      height: 100%;
-      background: linear-gradient(90deg, #454e54, #8c999f);
-    }
-
-    .prob-row.push .prob-fill {
-      background: linear-gradient(90deg, var(--red-dark), var(--red));
-      box-shadow: 0 0 14px rgba(255, 45, 63, 0.35);
-    }
-
-    .prob-value {
-      color: var(--paper);
-      font-family: var(--mono);
-      font-size: 18px;
-      font-weight: 800;
-      text-align: right;
-    }
-
-    .delta-row {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 13px;
-      align-items: center;
-      margin-top: 16px;
-      padding: 10px 11px;
-      border: 1px solid rgba(51, 239, 255, 0.28);
-      background: var(--cyan-soft);
-    }
-
-    .delta-row strong {
-      color: var(--cyan);
-      font-family: var(--mono);
-      font-size: 26px;
-      letter-spacing: -0.07em;
-    }
-
-    .delta-row p {
-      color: var(--paper);
-      font-size: 13px;
-      line-height: 1.2;
-    }
-
-    .shadow-price {
+    .system-summary {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
-      gap: 13px;
+      gap: 18px;
       align-items: center;
-      margin-top: auto;
-      padding-top: 12px;
-      border-top: 1px solid var(--line);
+      margin-top: 22px;
     }
 
-    .shadow-price .multiplier {
-      color: var(--amber);
+    .system-summary strong {
+      color: var(--cyan);
       font-family: var(--mono);
-      font-size: 34px;
-      font-weight: 900;
-      letter-spacing: -0.08em;
-      line-height: 1;
-    }
-
-    .shadow-price strong {
-      display: block;
-      font-size: 14px;
-      line-height: 1.05;
+      font-size: 11px;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
     }
 
-    .shadow-price span {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 8px;
+    .system-summary p {
+      color: var(--white);
+      font-size: 17px;
       line-height: 1.25;
     }
 
-    .scenario-caption {
-      position: absolute;
-      right: 34px;
-      bottom: 18px;
-      left: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .decision-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.05fr) minmax(0, 1.02fr);
+      gap: 20px;
+      height: 302px;
+      margin-top: 22px;
+    }
+
+    .decision-grid > article {
+      min-width: 0;
+      padding: 19px;
+      border-top: 2px solid var(--line);
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .decision-grid > article:nth-child(1) {
+      border-color: var(--red);
+    }
+
+    .decision-grid > article:nth-child(2) {
+      border-color: var(--cyan);
+    }
+
+    .decision-grid > article:nth-child(3) {
+      border-color: var(--amber);
+    }
+
+    .decision-grid h3 {
       color: var(--muted);
       font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.05em;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .gap-number {
+      margin-top: 22px;
+      color: var(--white);
+      font-family: var(--mono);
+      font-size: 51px;
+      font-weight: 800;
+      letter-spacing: -0.08em;
+      line-height: 1;
+    }
+
+    .gap-number span {
+      margin-left: 5px;
+      color: var(--muted);
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    .threshold-copy {
+      margin-top: 8px !important;
+      color: var(--red);
+      font-size: 15px;
+    }
+
+    .mini-track {
+      display: block;
+      width: 100%;
+      height: 95px;
+      margin-top: 15px;
+    }
+
+    .energy-spend {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .energy-spend strong {
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 35px;
+      letter-spacing: -0.07em;
+    }
+
+    .energy-spend span {
+      color: var(--muted);
+      font-size: 13px;
       text-transform: uppercase;
     }
 
-    .scenario-caption strong {
-      color: var(--paper);
-      font-size: 9px;
+    .probability-change {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 11px;
+      align-items: center;
+      margin-top: 25px;
     }
 
-    .proof-layout {
+    .probability-change strong {
+      color: var(--white);
+      font-family: var(--mono);
+      font-size: 37px;
+      letter-spacing: -0.07em;
+      text-align: center;
+    }
+
+    .probability-change strong:last-child {
+      color: var(--cyan);
+    }
+
+    .probability-change span {
+      color: var(--red);
+      font-family: var(--mono);
+      font-size: 20px;
+    }
+
+    .probability-labels {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 0.94fr);
-      gap: 18px;
-      height: 349px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 7px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 8px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .recommendation {
+      margin-top: 24px !important;
+      color: var(--white);
+      font-size: 19px;
+      font-weight: 750;
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+
+    .later-value {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
       margin-top: 17px;
     }
 
-    .risk-panel,
-    .hil-panel {
-      min-width: 0;
-      padding: 14px 15px;
-    }
-
-    .panel-heading {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .panel-heading strong {
-      display: block;
-      font-size: 20px;
+    .later-value strong {
+      color: var(--amber);
+      font-family: var(--mono);
+      font-size: 42px;
+      letter-spacing: -0.08em;
       line-height: 1;
-      text-transform: uppercase;
     }
 
-    .panel-heading span {
-      display: block;
-      margin-top: 4px;
+    .later-value span {
       color: var(--muted);
-      font-family: var(--mono);
-      font-size: 7px;
-      text-transform: uppercase;
-    }
-
-    .risk-mode {
-      padding: 6px 9px;
-      color: var(--cyan);
-      border: 1px solid rgba(51, 239, 255, 0.34);
-      background: var(--cyan-soft);
-      font-family: var(--mono);
-      font-size: 8px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 13px;
+      line-height: 1.15;
     }
 
     .risk-table {
       width: 100%;
-      margin-top: 11px !important;
+      margin-top: 21px !important;
       border-collapse: collapse;
       table-layout: fixed;
       font-family: var(--mono);
@@ -1055,510 +594,175 @@
 
     .risk-table th,
     .risk-table td {
-      padding: 7px 7px;
-      border-bottom: 1px solid rgba(248, 242, 231, 0.08);
+      padding: 8px 4px;
+      border-bottom: 1px solid var(--line);
       text-align: right;
-    }
-
-    .risk-table th {
-      color: #748087;
-      font-size: 7px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     .risk-table th:first-child,
     .risk-table td:first-child {
-      width: 42%;
+      width: 45%;
       text-align: left;
     }
 
-    .risk-table td {
+    .risk-table th {
       color: var(--muted);
-      font-size: 10px;
+      font-size: 7px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
 
-    .risk-table td:first-child {
-      color: var(--paper);
-      font-weight: 700;
+    .risk-table td {
+      color: var(--white);
+      font-size: 9px;
     }
 
-    .risk-table tr.selected td {
-      color: var(--paper);
-      background: rgba(51, 239, 255, 0.08);
-    }
-
-    .risk-table tr.selected td:first-child {
+    .risk-table tr:first-child td:first-child {
       color: var(--cyan);
-      box-shadow: inset 2px 0 0 var(--cyan);
     }
 
-    .risk-table tr.attack td:last-child {
+    .risk-table tr:last-child td:last-child {
       color: var(--red);
     }
 
-    .tail-meter {
-      display: inline-block;
-      width: 44px;
-      height: 4px;
-      margin-right: 7px;
-      vertical-align: middle;
-      background: rgba(255, 255, 255, 0.07);
-    }
-
-    .tail-meter i {
-      display: block;
-      width: var(--tail);
-      height: 100%;
-      background: var(--green);
-    }
-
-    .attack .tail-meter i {
-      background: var(--red);
-    }
-
-    .choice-logic {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 7px;
-      margin-top: 12px;
-    }
-
-    .choice-logic div {
-      min-width: 0;
-      padding: 8px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.018);
-    }
-
-    .choice-logic span,
-    .choice-logic strong {
-      display: block;
-      font-family: var(--mono);
-      text-transform: uppercase;
-    }
-
-    .choice-logic span {
-      color: var(--muted);
-      font-size: 6px;
-      letter-spacing: 0.08em;
-    }
-
-    .choice-logic strong {
-      margin-top: 5px;
-      color: var(--paper);
-      font-size: 8px;
-    }
-
-    .choice-logic div:nth-child(2) {
-      border-color: rgba(51, 239, 255, 0.35);
-    }
-
-    .choice-logic div:nth-child(2) strong {
-      color: var(--cyan);
-    }
-
-    .hil-flow {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 11px;
-    }
-
-    .hil-node {
-      position: relative;
-      min-width: 0;
-      padding: 9px 6px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.022);
-      font-family: var(--mono);
-      text-align: center;
-    }
-
-    .hil-node:not(:last-child)::after {
-      position: absolute;
-      top: 50%;
-      right: -9px;
-      z-index: 2;
-      color: var(--cyan);
-      content: ">";
-      font-size: 9px;
-      transform: translateY(-50%);
-    }
-
-    .hil-node b {
-      display: block;
-      color: var(--paper);
-      font-size: 8px;
-      line-height: 1.1;
-      text-transform: uppercase;
-    }
-
-    .hil-node span {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 6px;
-      line-height: 1.15;
-      text-transform: uppercase;
-    }
-
-    .hil-node.sensor {
-      border-color: rgba(255, 200, 87, 0.45);
-      background: rgba(255, 200, 87, 0.06);
-    }
-
-    .hil-node.sensor b {
-      color: var(--amber);
-    }
-
-    .hil-readout {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
-      margin-top: 11px;
-    }
-
-    .hil-metric {
-      min-width: 0;
-      padding: 8px 7px 7px;
-      border-top: 1px solid var(--line-strong);
-      background: rgba(255, 255, 255, 0.018);
-    }
-
-    .hil-metric span {
-      display: block;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 6px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .hil-metric strong {
-      display: block;
-      margin-top: 5px;
-      color: var(--paper);
-      font-family: var(--mono);
-      font-size: 14px;
-      letter-spacing: -0.05em;
-      line-height: 1;
-    }
-
-    .energy-trace {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 112px;
-      gap: 10px;
-      align-items: center;
-      margin-top: 11px;
-      padding: 8px 10px;
-      border: 1px solid var(--line);
-      background: rgba(5, 6, 8, 0.54);
-    }
-
-    .trace-copy strong {
-      display: block;
-      color: var(--paper);
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-
-    .trace-copy span {
-      display: block;
-      margin-top: 3px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 7px;
+    .decision-takeaway {
+      margin-top: 18px !important;
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 750;
       line-height: 1.2;
     }
 
-    .energy-trace svg {
+    .decision-takeaway span {
+      color: var(--cyan);
+    }
+
+    .evidence-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+      gap: 36px;
+      height: 220px;
+      margin-top: 12px;
+    }
+
+    .hil-proof {
+      min-width: 0;
+      padding-right: 31px;
+      border-right: 1px solid var(--line);
+    }
+
+    .hil-proof svg {
       display: block;
-      width: 112px;
-      height: 42px;
-    }
-
-    .proof-boundary {
-      position: absolute;
-      right: 34px;
-      bottom: 18px;
-      left: 34px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .proof-boundary::before {
-      width: 24px;
-      height: 2px;
-      content: "";
-      background: var(--red);
-    }
-
-    .proof-boundary strong {
-      color: var(--paper);
+      width: 100%;
+      height: 195px;
     }
 
     .gates {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 19px;
+      align-content: start;
+      gap: 0;
     }
 
     .gate {
-      position: relative;
-      min-width: 0;
-      height: 128px;
-      padding: 15px 12px 11px;
-      border: 1px solid var(--line);
-      background:
-        linear-gradient(150deg, rgba(255, 255, 255, 0.045), transparent 48%),
-        rgba(13, 17, 21, 0.9);
-      clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 13px, 100% 100%, 0 100%);
-    }
-
-    .gate::before {
-      position: absolute;
-      top: 0;
-      right: 13px;
-      left: 0;
-      height: 2px;
-      content: "";
-      background: var(--gate-color, var(--line-strong));
-    }
-
-    .gate-no {
-      color: var(--gate-color, var(--muted));
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 800;
-    }
-
-    .gate h3 {
-      margin-top: 12px !important;
-      font-size: 17px;
-    }
-
-    .gate p {
-      margin-top: 9px !important;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 7px;
-      line-height: 1.35;
-    }
-
-    .gate:nth-child(1) {
-      --gate-color: var(--red);
-    }
-
-    .gate:nth-child(2),
-    .gate:nth-child(3) {
-      --gate-color: var(--cyan);
-    }
-
-    .gate:nth-child(4) {
-      --gate-color: var(--amber);
-    }
-
-    .gate:nth-child(5) {
-      --gate-color: var(--green);
-    }
-
-    .closing-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .closing-claim {
-      position: relative;
-      min-width: 0;
-      padding: 18px 20px 16px;
-      border-left: 4px solid var(--red);
-      background:
-        linear-gradient(100deg, rgba(255, 45, 63, 0.12), rgba(51, 239, 255, 0.04)),
-        rgba(11, 14, 18, 0.92);
-    }
-
-    .closing-claim .claim-line {
-      color: var(--paper);
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      line-height: 1.05;
-      text-transform: uppercase;
-    }
-
-    .closing-claim .claim-line span {
-      color: var(--cyan);
-    }
-
-    .closing-claim p {
-      max-width: 610px;
-      margin-top: 10px !important;
-      color: #c3cccf;
-      font-size: 12px;
-      line-height: 1.32;
-    }
-
-    .credibility {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-width: 0;
-      padding: 13px 15px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .credibility strong {
-      color: var(--amber);
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .credibility p {
-      margin-top: 7px !important;
-      color: var(--muted);
-      font-size: 10px;
-      line-height: 1.3;
-    }
-
-    .final-line {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 13px;
-      padding-top: 10px;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 13px;
+      padding: 13px 0;
       border-top: 1px solid var(--line);
     }
 
-    .final-line strong {
-      color: var(--paper);
+    .gate:first-child {
+      border-color: var(--red);
+    }
+
+    .gate:nth-child(2) {
+      border-color: var(--cyan);
+    }
+
+    .gate:nth-child(3) {
+      border-color: var(--green);
+    }
+
+    .gate-no {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .gate strong {
+      display: block;
+      color: var(--white);
       font-size: 17px;
-      font-style: italic;
-      letter-spacing: 0.01em;
       text-transform: uppercase;
     }
 
-    .final-line span {
-      color: var(--cyan);
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
+    .gate p {
+      margin-top: 4px !important;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
     }
 
-    .nav-hint {
-      position: fixed;
-      bottom: 10px;
-      left: 14px;
-      z-index: 30;
-      display: flex;
-      gap: 9px;
+    .closing-claim {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+      gap: 30px;
       align-items: center;
-      color: rgba(248, 242, 231, 0.5);
-      font-family: var(--mono);
-      font-size: 7px;
-      letter-spacing: 0.08em;
-      pointer-events: none;
+      margin-top: 8px !important;
+      padding: 12px 20px;
+      border-left: 3px solid var(--red);
+      background: linear-gradient(90deg, rgba(255, 48, 69, 0.1), rgba(57, 231, 242, 0.035));
+      box-shadow: none;
+    }
+
+    .closing-claim strong {
+      color: var(--white);
+      font-size: 21px;
+      font-style: normal;
+      line-height: 1.12;
       text-transform: uppercase;
     }
 
-    .nav-hint kbd {
-      min-width: 18px;
-      padding: 3px 5px;
-      color: var(--paper);
-      border: 1px solid var(--line-strong);
-      border-radius: 2px;
-      background: rgba(5, 6, 8, 0.74);
-      font-family: var(--mono);
-      font-size: 7px;
-      text-align: center;
-    }
-
-    .reveal .controls {
-      right: 10px;
-      bottom: 17px;
-      color: var(--red);
-      transform: scale(0.58);
-      transform-origin: 100% 100%;
+    .closing-claim p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
     }
 
     .reveal .progress {
       height: 3px;
       color: var(--cyan);
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .reveal .slide-number {
-      right: 17px;
-      bottom: 8px;
-      color: rgba(248, 242, 231, 0.72);
+      right: 13px;
+      bottom: 7px;
+      color: rgba(247, 242, 232, 0.58);
       background: transparent;
       font-family: var(--mono);
       font-size: 8px;
       letter-spacing: 0.08em;
     }
 
-    .reveal .fragment.fade-up {
-      transform: translateY(12px);
-    }
-
-    .reveal .fragment.fade-up.visible {
-      transform: translateY(0);
-    }
-
-    .visually-hidden {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      padding: 0 !important;
-      margin: -1px !important;
-      overflow: hidden !important;
-      clip: rect(0, 0, 0, 0) !important;
-      white-space: nowrap !important;
-      border: 0 !important;
-    }
-
     @media (max-width: 640px) {
       .reveal .slides > section {
-        padding-right: 28px;
-        padding-left: 28px;
+        padding-right: 31px;
+        padding-left: 31px;
       }
 
       .reveal h1 {
-        font-size: 57px;
+        font-size: 60px;
       }
 
       .reveal h2 {
-        font-size: 42px;
+        font-size: 46px;
       }
 
-      .slide-id {
-        right: 22px;
-      }
-
-      .mode-rail,
-      .scenario-caption,
-      .proof-boundary {
-        right: 28px;
-        left: 28px;
-      }
-
-      .nav-hint {
-        bottom: 5px;
-        left: 8px;
+      .question-line {
+        right: 31px;
+        left: 31px;
       }
     }
 
@@ -1566,333 +770,247 @@
       *,
       *::before,
       *::after {
-        scroll-behavior: auto !important;
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-      }
-
-      .reveal .fragment.fade-up,
-      .reveal .fragment.fade-up.visible {
-        transform: none;
       }
     }
   </style>
 </head>
 <body>
   <div class="reveal">
-    <main class="slides" aria-label="JouleIQ competition presentation">
+    <main class="slides" aria-label="Vmax energy-aware race strategy presentation">
       <section aria-labelledby="slide-1-title">
-        <span class="slide-id" aria-hidden="true">01</span>
-        <header class="topline">
-          <div class="brand-mark" aria-label="JouleIQ"><span>JOULE</span><span>IQ</span></div>
-          <div class="telemetry-meta"><span>Race intelligence system</span><span>Positioning / 01</span></div>
+        <header class="topbar">
+          <div class="vmax" aria-label="Vmax">VMAX</div>
+          <span class="page-no">01 / 05</span>
         </header>
-        <div class="hero-layout">
-          <article class="hero-copy">
-            <p class="kicker">Energy has a memory</p>
-            <h1 id="slide-1-title">Price every joule.<br><span>Choose the right fight.</span></h1>
-            <p class="hero-lead">JouleIQ converts live race telemetry into explainable advice: conserve, hold, pressure, attack, or defend, based on what energy is worth now and later.</p>
-            <div class="positioning" aria-label="JouleIQ product positioning">
-              <span class="not">Not</span>
-              <strong>RL driving a car</strong>
-              <span class="position-arrow" aria-hidden="true">&rarr;</span>
-              <span class="is">Is</span>
-              <strong>Human-facing decision intelligence</strong>
-            </div>
+        <div class="intro-grid">
+          <article class="intro-copy">
+            <p class="approach-label">The JouleIQ approach</p>
+            <h1 id="slide-1-title">Every joule spent now changes what is possible later.</h1>
+            <p class="lead">Vmax compares the value of energy now with the opportunities it can unlock later, then gives the engineer one explainable recommendation.</p>
+            <p class="human-note">Human strategy advice, not autonomous driving</p>
           </article>
-          <figure class="track-panel cut-panel" aria-labelledby="track-title">
-            <figcaption id="track-title">
-              <span class="mono-label">Strategic lap map</span>
-              <span class="micro-tag">Reference state</span>
-            </figcaption>
-            <svg viewBox="0 0 300 242" role="img" aria-labelledby="track-svg-title track-svg-desc">
-              <title id="track-svg-title">Abstract race circuit and energy value gauge</title>
-              <desc id="track-svg-desc">A cyan circuit outline with a red racing line and markers for current, detection, and attack windows around a central energy gauge.</desc>
+          <figure class="core-visual" aria-labelledby="core-visual-title">
+            <svg viewBox="0 0 330 334" role="img" aria-labelledby="core-visual-title core-visual-desc">
+              <title id="core-visual-title">Energy value around a race circuit</title>
+              <desc id="core-visual-desc">An abstract circuit shows a small current opportunity and a larger future attack window connected by stored energy.</desc>
               <defs>
-                <filter id="cyanGlow" x="-40%" y="-40%" width="180%" height="180%">
+                <linearGradient id="trackLine" x1="60" y1="30" x2="280" y2="290" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#39e7f2"></stop>
+                  <stop offset="0.58" stop-color="#f7f2e8"></stop>
+                  <stop offset="1" stop-color="#ff3045"></stop>
+                </linearGradient>
+                <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
                   <feGaussianBlur stdDeviation="2.5" result="blur"></feGaussianBlur>
                   <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
                 </filter>
-                <linearGradient id="gaugeGradient" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#33efff"></stop>
-                  <stop offset="0.72" stop-color="#f8f2e7"></stop>
-                  <stop offset="1" stop-color="#ff2d3f"></stop>
-                </linearGradient>
               </defs>
-              <path d="M55 52 C94 11 191 19 229 48 C276 84 254 121 219 133 C183 146 207 193 157 215 C111 235 36 205 37 161 C38 122 82 118 86 93 C90 72 34 79 55 52 Z" fill="none" stroke="#2a3338" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="M55 52 C94 11 191 19 229 48 C276 84 254 121 219 133 C183 146 207 193 157 215 C111 235 36 205 37 161 C38 122 82 118 86 93 C90 72 34 79 55 52 Z" fill="none" stroke="#33efff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 7" filter="url(#cyanGlow)"></path>
-              <path d="M51 55 C92 21 184 22 223 50 C247 68 252 89 238 109" fill="none" stroke="#ff2d3f" stroke-width="4" stroke-linecap="round" filter="url(#cyanGlow)"></path>
-              <circle cx="52" cy="56" r="6" fill="#050608" stroke="#33efff" stroke-width="2"></circle>
-              <circle cx="239" cy="109" r="6" fill="#ff2d3f"></circle>
-              <circle cx="164" cy="214" r="5" fill="#ffc857"></circle>
-              <line x1="53" y1="48" x2="30" y2="32" stroke="#59666b" stroke-width="1"></line>
-              <text x="7" y="27" fill="#aeb8bd" font-family="monospace" font-size="7">CURRENT</text>
-              <line x1="244" y1="109" x2="278" y2="96" stroke="#59666b" stroke-width="1"></line>
-              <text x="244" y="90" fill="#ff2d3f" font-family="monospace" font-size="7">ATTACK</text>
-              <line x1="165" y1="218" x2="191" y2="232" stroke="#59666b" stroke-width="1"></line>
-              <text x="193" y="236" fill="#ffc857" font-family="monospace" font-size="7">DETECTION</text>
-              <circle cx="150" cy="117" r="43" fill="#090c0f" stroke="#293238" stroke-width="7"></circle>
-              <circle cx="150" cy="117" r="43" fill="none" stroke="url(#gaugeGradient)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188 270" transform="rotate(132 150 117)"></circle>
-              <text x="150" y="110" fill="#aeb8bd" font-family="monospace" font-size="7" text-anchor="middle">ENERGY VALUE</text>
-               <text x="150" y="132" fill="#f8f2e7" font-family="monospace" font-size="25" font-weight="800" text-anchor="middle">MODEL</text>
+              <path d="M78 64C120 18 224 25 268 69C306 107 280 146 236 153C197 159 224 218 176 263C130 306 45 270 54 207C60 167 102 153 100 119C99 89 55 89 78 64Z" fill="none" stroke="#20272c" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M78 64C120 18 224 25 268 69C306 107 280 146 236 153C197 159 224 218 176 263C130 306 45 270 54 207C60 167 102 153 100 119C99 89 55 89 78 64Z" fill="none" stroke="url(#trackLine)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 11" filter="url(#softGlow)"></path>
+              <path d="M79 64C124 27 215 28 262 70" fill="none" stroke="#ff3045" stroke-width="7" stroke-linecap="round"></path>
+              <circle cx="80" cy="64" r="8" fill="#07080a" stroke="#39e7f2" stroke-width="3"></circle>
+              <circle cx="262" cy="70" r="8" fill="#ff3045"></circle>
+              <line x1="80" y1="54" x2="55" y2="35" stroke="#667177"></line>
+              <text x="20" y="29" fill="#a8b0b5" font-family="monospace" font-size="9">NOW</text>
+              <line x1="269" y1="69" x2="304" y2="48" stroke="#667177"></line>
+              <text x="270" y="41" fill="#ff3045" font-family="monospace" font-size="9">LATER</text>
+              <path d="M91 173C130 137 195 134 240 176" fill="none" stroke="#3f4a50" stroke-width="2"></path>
+              <path d="M91 173C133 151 186 148 233 175" fill="none" stroke="#39e7f2" stroke-width="3" stroke-linecap="round"></path>
+              <polygon points="233,170 245,177 232,182" fill="#39e7f2"></polygon>
+              <text x="166" y="132" fill="#a8b0b5" font-family="monospace" font-size="9" text-anchor="middle">STORE VALUE</text>
+              <text x="166" y="196" fill="#f7f2e8" font-family="Arial, sans-serif" font-size="17" font-weight="800" text-anchor="middle">NOW VS LATER</text>
             </svg>
-            <div class="track-stats" aria-label="Core intelligence features">
-              <div class="track-stat"><b>512</b><span>Futures / action</span></div>
-              <div class="track-stat"><b>CVaR</b><span>Tail risk</span></div>
-              <div class="track-stat"><b>TTL</b><span>Safe advice</span></div>
-            </div>
           </figure>
-        </div>
-        <div class="mode-rail" aria-label="Available tactical modes">
-          <span class="rail-label">Tactical set</span>
-          <span class="mode">Conserve</span>
-          <span class="mode active">Hold</span>
-          <span class="mode">Pressure</span>
-          <span class="mode">Elig push</span>
-          <span class="mode">Attack</span>
-          <span class="mode">Defend</span>
         </div>
       </section>
 
       <section aria-labelledby="slide-2-title">
-        <span class="slide-id" aria-hidden="true">02</span>
-        <header class="topline">
-          <div class="brand-mark" aria-label="JouleIQ"><span>JOULE</span><span>IQ</span></div>
-          <div class="telemetry-meta"><span>Reference to recommendation</span><span>Architecture / 02</span></div>
+        <header class="topbar">
+          <div class="vmax" aria-label="Vmax">VMAX</div>
+          <span class="page-no">02 / 05</span>
         </header>
-        <div class="section-head">
-          <h2 id="slide-2-title">From telemetry.<br><span class="cyan">To decision.</span></h2>
-          <p class="subtitle">The game calibrates the world. A fast programmable twin evaluates the choices.</p>
+        <div class="section-heading">
+          <p class="approach-label">Why energy has future value</p>
+          <h2 id="slide-2-title">The fastest move now can lose the race later.</h2>
         </div>
-        <div class="architecture-wrap cut-panel">
-          <ol class="pipeline" aria-label="Telemetry to decision architecture">
-            <li class="reference">
-              <span class="node-no">01 / SENSE</span>
-              <h3>F1 25<br>2026 UDP</h3>
-              <p>Official telemetry<br>reference environment</p>
-            </li>
-            <li>
-              <span class="node-no">02 / ESTIMATE</span>
-              <h3>Race state<br>+ belief</h3>
-              <p>Gap, energy, eligibility<br>hidden rival state</p>
-            </li>
-            <li>
-              <span class="node-no">03 / SIMULATE</span>
-              <h3>Fast digital<br>twin</h3>
-              <p>Programmable segment<br>transitions</p>
-            </li>
-            <li>
-              <span class="node-no">04 / EVALUATE</span>
-              <h3>Monte Carlo<br>+ PPO value</h3>
-              <p>Six actions, shared futures<br>long-horizon leaf value</p>
-            </li>
-            <li>
-              <span class="node-no">05 / GUARD</span>
-              <h3>CVaR risk<br>+ shield</h3>
-              <p>Tail outcomes, rules<br>energy and stale-state checks</p>
-            </li>
-            <li class="advice">
-              <span class="node-no">06 / ADVISE</span>
-              <h3>Engineer<br>recommendation</h3>
-              <p>Action, cost, gain, risk<br>confidence, reason, TTL</p>
-            </li>
-          </ol>
-          <div class="architecture-lanes">
-            <div class="lane">
-              <span class="lane-title">Calibration lane</span>
-              <span class="lane-flow">Recorded laps <span>&rarr;</span> held-out twin validation</span>
+        <div class="value-layout">
+          <article class="value-principle">
+            <p>Stored energy is a finite option. Spend it in a low-value window and the decisive window may arrive with nothing left.</p>
+            <div class="outcome-line">
+              <strong>Greedy</strong>
+              <span>Wins the next sector, misses the better attack.</span>
             </div>
-            <div class="lane">
-              <span class="lane-title">Physical lane</span>
-              <span class="lane-flow">Advice <span>&rarr;</span> ESP32 <span>&rarr;</span> INA219</span>
+            <div class="outcome-line good">
+              <strong>JouleIQ</strong>
+              <span>Holds now, spends where energy changes race outcome.</span>
             </div>
-          </div>
+          </article>
+          <figure class="value-chart" aria-labelledby="value-chart-title">
+            <svg viewBox="0 0 500 294" role="img" aria-labelledby="value-chart-title value-chart-desc">
+              <title id="value-chart-title">Future value of stored energy</title>
+              <desc id="value-chart-desc">The marginal value of stored energy is moderate now and peaks at a later attack window.</desc>
+              <path d="M48 242H478M48 242V28" stroke="#465057" stroke-width="1"></path>
+              <path d="M48 196C106 182 132 184 174 192C222 201 242 178 282 149C333 111 356 52 412 59C443 63 456 87 478 82" fill="none" stroke="#39e7f2" stroke-width="4" stroke-linecap="round"></path>
+              <path d="M48 242L48 196C106 182 132 184 174 192C222 201 242 178 282 149C333 111 356 52 412 59C443 63 456 87 478 82V242Z" fill="rgba(57,231,242,0.07)"></path>
+              <line x1="133" y1="46" x2="133" y2="242" stroke="#ff3045" stroke-width="2" stroke-dasharray="5 7"></line>
+              <line x1="406" y1="46" x2="406" y2="242" stroke="#f4c35a" stroke-width="2" stroke-dasharray="5 7"></line>
+              <circle cx="133" cy="184" r="7" fill="#ff3045"></circle>
+              <circle cx="406" cy="58" r="8" fill="#f4c35a"></circle>
+              <text x="133" y="31" fill="#ff3045" font-family="monospace" font-size="10" text-anchor="middle">SPEND NOW</text>
+              <text x="406" y="31" fill="#f4c35a" font-family="monospace" font-size="10" text-anchor="middle">ATTACK WINDOW</text>
+              <text x="263" y="280" fill="#a8b0b5" font-family="monospace" font-size="10" text-anchor="middle">RACE PROGRESS</text>
+              <text x="17" y="137" fill="#a8b0b5" font-family="monospace" font-size="10" text-anchor="middle" transform="rotate(-90 17 137)">VALUE PER JOULE</text>
+            </svg>
+          </figure>
         </div>
-        <div class="architecture-proof" aria-label="Architecture boundaries and target">
-          <article><strong>Reference world</strong><span>High fidelity, slow, telemetry-producing</span></article>
-          <article><strong>Decision world</strong><span>Fast, cloneable, counterfactual</span></article>
-          <article><strong>&lt; 200 ms p95</strong><span>Predeclared advisory latency target</span></article>
-        </div>
+        <p class="question-line"><span>The question:</span> where does the next joule change expected race outcome most?</p>
       </section>
 
       <section aria-labelledby="slide-3-title">
-        <span class="slide-id" aria-hidden="true">03</span>
-        <header class="topline">
-          <div class="brand-mark" aria-label="JouleIQ"><span>JOULE</span><span>IQ</span></div>
-          <div class="telemetry-meta"><span>Signature decision</span><span>Eligibility / 03</span></div>
+        <header class="topbar">
+          <div class="vmax" aria-label="Vmax">VMAX</div>
+          <span class="page-no">03 / 05</span>
         </header>
-        <div class="section-head">
-          <h2 id="slide-3-title">At <span class="accent">1.06 s</span>, a small push<br>changes the future.</h2>
-          <p class="subtitle">The objective is not instant speed. It is crossing a nonlinear eligibility threshold with energy left to exploit it.</p>
+        <div class="section-heading">
+          <p class="approach-label">The four-step system</p>
+          <h2 id="slide-3-title">From live telemetry to one defensible call.</h2>
         </div>
-        <div class="scenario-layout">
-          <article class="detection-panel cut-panel" aria-label="Detection line scenario">
-            <div class="session-line"><span>Lap 42 / 57 &middot; P8 &middot; Energy 43%</span><strong>Balanced</strong></div>
-            <div class="gap-readout">
-              <div class="gap-value">1.06<span>s gap</span></div>
-              <div class="threshold">Eligibility line<br>&le; 1.00 s</div>
-            </div>
-            <div class="track-window" aria-label="Car approaching the detection line">
-              <div class="car-marker" aria-hidden="true"></div>
-              <div class="detection-line"><span>Detection</span></div>
-              <span class="distance-label">690 m to threshold</span>
-            </div>
-            <div class="decision-ticket">
-              <div><span>Recommended action</span><strong>Eligibility push</strong></div>
-              <div class="energy-cost">0.14 MJ</div>
-            </div>
-          </article>
-          <article class="eligibility-panel cut-panel" aria-label="Eligibility probability comparison">
-            <div class="eligibility-title">
-              <strong>Probability of unlock</strong>
-              <span>Same state<br>different action</span>
-            </div>
-            <div class="probability-bars">
-              <div class="prob-row">
-                <span class="prob-name">Hold</span>
-                <div class="prob-track"><div class="prob-fill" style="--value: 0.34"></div></div>
-                <strong class="prob-value">34%</strong>
-              </div>
-              <div class="prob-row push fragment fade-up" data-fragment-index="0">
-                <span class="prob-name">Elig push</span>
-                <div class="prob-track"><div class="prob-fill" style="--value: 0.81"></div></div>
-                <strong class="prob-value">81%</strong>
-              </div>
-            </div>
-            <div class="delta-row fragment fade-up" data-fragment-index="1">
-              <strong>+47 pp</strong>
-              <p>The 0.14 MJ spend buys access to the next overtaking opportunity, not just 0.11 s now.</p>
-            </div>
-            <div class="shadow-price fragment fade-up" data-fragment-index="2">
-              <div class="multiplier">3.7x</div>
-              <div><strong>Save the rest for the attack window</strong><span>Projected marginal energy value is higher later.</span></div>
-            </div>
-          </article>
+        <ol class="system-flow" aria-label="Four-step race strategy system">
+          <li>
+            <span class="step-no">01</span>
+            <h3>Telemetry</h3>
+            <p>Read gap, energy, race state, and 2026 overtake signals.</p>
+          </li>
+          <li>
+            <span class="step-no">02</span>
+            <h3>Fast twin</h3>
+            <p>Calibrate a programmable strategic model from recorded laps.</p>
+          </li>
+          <li>
+            <span class="step-no">03</span>
+            <h3>Compare</h3>
+            <p>Run the same uncertain futures across every valid action.</p>
+          </li>
+          <li>
+            <span class="step-no">04</span>
+            <h3>Advise</h3>
+            <p>Show the action, energy cost, risk, confidence, and reason.</p>
+          </li>
+        </ol>
+        <div class="system-summary">
+          <strong>Decision boundary</strong>
+          <p>The game supplies telemetry. The twin explores futures. The engineer remains in control.</p>
         </div>
-        <div class="scenario-caption"><span>Energy Shadow Price + Eligibility Value</span><strong>Spend enough now. Preserve optionality later.</strong></div>
       </section>
 
       <section aria-labelledby="slide-4-title">
-        <span class="slide-id" aria-hidden="true">04</span>
-        <header class="topline">
-          <div class="brand-mark" aria-label="JouleIQ"><span>JOULE</span><span>IQ</span></div>
-          <div class="telemetry-meta"><span>Risk to real current</span><span>Proof / 04</span></div>
+        <header class="topbar">
+          <div class="vmax" aria-label="Vmax">VMAX</div>
+          <span class="page-no">04 / 05</span>
         </header>
-        <div class="section-head">
-          <h2 id="slide-4-title">Choose the outcome<br><span class="cyan">you can survive.</span></h2>
-          <p class="subtitle">Mean pace is not enough. JouleIQ prices the adverse tail, then sends the selected mode through a measurable electrical loop.</p>
+        <div class="section-heading">
+          <p class="approach-label">The signature decision</p>
+          <h2 id="slide-4-title">Spend 0.14 MJ to unlock the better fight.</h2>
         </div>
-        <div class="proof-layout">
-          <article class="risk-panel cut-panel" aria-label="Risk-aware action comparison">
-            <div class="panel-heading">
-              <div><strong>Counterfactual board</strong><span>Lower finishing position is better</span></div>
-              <div class="risk-mode">CVaR10 &middot; Balanced</div>
+        <div class="decision-grid">
+          <article aria-label="Current race context">
+            <h3>Current gap</h3>
+            <div class="gap-number">1.06<span>s</span></div>
+            <p class="threshold-copy">Eligibility requires 1.00 s</p>
+            <svg class="mini-track" viewBox="0 0 210 95" role="img" aria-labelledby="mini-track-title mini-track-desc">
+              <title id="mini-track-title">Approach to the detection line</title>
+              <desc id="mini-track-desc">The Vmax car approaches a detection line from a gap just outside the eligibility threshold.</desc>
+              <path d="M8 56H202" stroke="#3d464c" stroke-width="12" stroke-linecap="round"></path>
+              <path d="M8 56H202" stroke="#f7f2e8" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="6 7"></path>
+              <line x1="167" y1="14" x2="167" y2="87" stroke="#ff3045" stroke-width="3"></line>
+              <polygon points="43,45 76,45 88,56 76,67 43,67 31,56" fill="#39e7f2"></polygon>
+              <text x="167" y="10" fill="#ff3045" font-family="monospace" font-size="8" text-anchor="middle">DETECTION</text>
+            </svg>
+          </article>
+          <article aria-label="Eligibility push outcome">
+            <h3>Eligibility push</h3>
+            <div class="energy-spend"><strong>0.14 MJ</strong><span>Energy cost</span></div>
+            <div class="probability-change" aria-label="Eligibility probability rises from 34 percent to 81 percent">
+              <strong>34%</strong><span>&rarr;</span><strong>81%</strong>
             </div>
+            <div class="probability-labels"><span>Hold</span><span>Push</span></div>
+            <p class="recommendation">Buy eligibility, not instant speed.</p>
+          </article>
+          <article aria-label="Future value and risk comparison">
+            <h3>Why not full attack?</h3>
+            <div class="later-value"><strong>3.7x</strong><span>more value per joule in the later attack window</span></div>
             <table class="risk-table">
               <thead><tr><th>Action</th><th>Mean</th><th>Worst 10%</th></tr></thead>
               <tbody>
-                <tr><td>Hold</td><td>P8.0</td><td><span class="tail-meter"><i style="--tail: 56%"></i></span>P8.5</td></tr>
-                <tr><td>Pressure</td><td>P7.6</td><td><span class="tail-meter"><i style="--tail: 73%"></i></span>P8.1</td></tr>
-                <tr class="selected fragment fade-up" data-fragment-index="0"><td>Eligibility push</td><td>P7.2</td><td><span class="tail-meter"><i style="--tail: 86%"></i></span>P7.9</td></tr>
-                <tr class="attack"><td>Attack</td><td>P7.1</td><td><span class="tail-meter"><i style="--tail: 27%"></i></span>P9.0</td></tr>
+                <tr><td>Elig push</td><td>P7.2</td><td>P7.9</td></tr>
+                <tr><td>Attack</td><td>P7.1</td><td>P9.0</td></tr>
               </tbody>
             </table>
-            <div class="choice-logic fragment fade-up" data-fragment-index="1" aria-label="Recommendations by risk mode">
-              <div><span>Robust</span><strong>Pressure</strong></div>
-              <div><span>Balanced</span><strong>Elig push</strong></div>
-              <div><span>Aggressive</span><strong>Attack</strong></div>
-            </div>
-          </article>
-          <article class="hil-panel cut-panel" aria-label="INA219 hardware in the loop proof">
-            <div class="panel-heading">
-              <div><strong>Physical HIL</strong><span>Command acknowledged, energy integrated</span></div>
-              <div class="risk-mode">INA219 &middot; Example</div>
-            </div>
-            <div class="hil-flow" aria-label="Recommendation to measured energy flow">
-              <div class="hil-node"><b>JouleIQ</b><span>Attack 95%</span></div>
-              <div class="hil-node"><b>ESP32-S3</b><span>TTL + PWM</span></div>
-              <div class="hil-node"><b>DRV8833</b><span>Motor drive</span></div>
-              <div class="hil-node sensor"><b>INA219</b><span>V, I, W, J</span></div>
-            </div>
-            <div class="hil-readout" aria-label="Example hardware telemetry">
-              <div class="hil-metric"><span>Voltage</span><strong>7.31 V</strong></div>
-              <div class="hil-metric"><span>Current</span><strong>0.44 A</strong></div>
-              <div class="hil-metric"><span>Power</span><strong>3.22 W</strong></div>
-              <div class="hil-metric"><span>Run energy</span><strong>12.8 J</strong></div>
-            </div>
-            <div class="energy-trace fragment fade-up" data-fragment-index="2">
-              <div class="trace-copy"><strong>Attack changes the slope</strong><span>Measured current and integrated joules rise with commanded deployment.</span></div>
-              <svg viewBox="0 0 112 42" role="img" aria-labelledby="trace-title trace-desc">
-                <title id="trace-title">Measured energy trace</title>
-                <desc id="trace-desc">A low conserve energy slope changes into a steep attack energy slope.</desc>
-                <path d="M1 37 H111 M1 24 H111 M1 11 H111" stroke="#293238" stroke-width="1" stroke-dasharray="2 3"></path>
-                <path d="M2 35 C21 34 34 31 49 28" fill="none" stroke="#33efff" stroke-width="2"></path>
-                <path d="M49 28 C66 24 84 13 110 3" fill="none" stroke="#ff2d3f" stroke-width="3"></path>
-                <circle cx="49" cy="28" r="3" fill="#f8f2e7"></circle>
-                <text x="3" y="9" fill="#aeb8bd" font-family="monospace" font-size="5">JOULES</text>
-                <text x="52" y="39" fill="#ff2d3f" font-family="monospace" font-size="5">ATTACK CMD</text>
-              </svg>
-            </div>
           </article>
         </div>
-        <div class="proof-boundary"><strong>Credible boundary:</strong> the rig validates control and energy measurement, not an F1 powertrain.</div>
+        <p class="decision-takeaway">Vmax gives up <span>0.1 position of mean upside</span> to protect 1.1 positions in the adverse tail.</p>
       </section>
 
       <section aria-labelledby="slide-5-title">
-        <span class="slide-id" aria-hidden="true">05</span>
-        <header class="topline">
-          <div class="brand-mark" aria-label="JouleIQ"><span>JOULE</span><span>IQ</span></div>
-          <div class="telemetry-meta"><span>Evidence before spectacle</span><span>Finish / 05</span></div>
+        <header class="topbar">
+          <div class="vmax" aria-label="Vmax">VMAX</div>
+          <span class="page-no">05 / 05</span>
         </header>
-        <div class="section-head">
-          <h2 id="slide-5-title">Build only what<br><span class="accent">survives the evidence gate.</span></h2>
-          <p class="subtitle">Each layer advances only when it is replayable, measurable, and harder to dismiss than the baseline.</p>
+        <div class="section-heading">
+          <p class="approach-label">Physical proof and evidence</p>
+          <h2 id="slide-5-title">Prove the decision from packet to joule.</h2>
         </div>
-        <div class="gates" aria-label="Competition build gates">
-          <article class="gate">
-            <span class="gate-no">GATE 01</span>
-            <h3>Telemetry</h3>
-            <p>Live packet IDs visible<br>Full session replay deterministic</p>
-          </article>
-          <article class="gate">
-            <span class="gate-no">GATE 02</span>
-            <h3>Digital twin</h3>
-            <p>Held-out time MAE &lt; 50 ms<br>Energy error &lt; 5%</p>
-          </article>
-          <article class="gate">
-            <span class="gate-no">GATE 03</span>
-            <h3>Strategy</h3>
-            <p>Paired CI above zero<br>Mean gain without CVaR loss</p>
-          </article>
-          <article class="gate">
-            <span class="gate-no">GATE 04</span>
-            <h3>Safety</h3>
-            <p>0 hard violations / 10k<br>Decision p95 &lt; 200 ms</p>
-          </article>
-          <article class="gate">
-            <span class="gate-no">GATE 05</span>
-            <h3>Proof</h3>
-            <p>ESP32 ACK + INA219 trace<br>One-command demo start</p>
-          </article>
+        <div class="evidence-layout">
+          <figure class="hil-proof" aria-labelledby="hil-title">
+            <svg viewBox="0 0 500 235" role="img" aria-labelledby="hil-title hil-desc">
+              <title id="hil-title">INA219 hardware-in-the-loop proof</title>
+              <desc id="hil-desc">A Vmax recommendation drives an ESP32 motor command while an INA219 measures voltage and current so the system can integrate real energy in joules.</desc>
+              <rect x="8" y="20" width="126" height="55" fill="#15191e" stroke="#ff3045"></rect>
+              <rect x="187" y="20" width="126" height="55" fill="#15191e" stroke="#39e7f2"></rect>
+              <rect x="366" y="20" width="126" height="55" fill="#15191e" stroke="#f7f2e8" stroke-opacity="0.35"></rect>
+              <text x="71" y="43" fill="#a8b0b5" font-family="monospace" font-size="9" text-anchor="middle">ADVICE</text>
+              <text x="71" y="61" fill="#f7f2e8" font-family="Arial, sans-serif" font-size="14" font-weight="800" text-anchor="middle">ATTACK</text>
+              <text x="250" y="43" fill="#a8b0b5" font-family="monospace" font-size="9" text-anchor="middle">ESP32-S3</text>
+              <text x="250" y="61" fill="#f7f2e8" font-family="Arial, sans-serif" font-size="14" font-weight="800" text-anchor="middle">PWM + TTL</text>
+              <text x="429" y="43" fill="#a8b0b5" font-family="monospace" font-size="9" text-anchor="middle">MOTOR DRIVE</text>
+              <text x="429" y="61" fill="#f7f2e8" font-family="Arial, sans-serif" font-size="14" font-weight="800" text-anchor="middle">REAL LOAD</text>
+              <path d="M134 47H187M313 47H366" stroke="#39e7f2" stroke-width="2"></path>
+              <polygon points="180,42 188,47 180,52" fill="#39e7f2"></polygon>
+              <polygon points="359,42 367,47 359,52" fill="#39e7f2"></polygon>
+              <rect x="173" y="113" width="154" height="55" fill="#15191e" stroke="#f4c35a"></rect>
+              <text x="250" y="136" fill="#f4c35a" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">INA219 MEASUREMENT</text>
+              <text x="250" y="155" fill="#f7f2e8" font-family="Arial, sans-serif" font-size="14" font-weight="800" text-anchor="middle">V x I &rarr; W &rarr; J</text>
+              <path d="M429 75V96H250V113" fill="none" stroke="#f4c35a" stroke-width="2"></path>
+              <path d="M250 168V201" stroke="#f4c35a" stroke-width="2"></path>
+              <path d="M30 214C103 211 143 206 210 198C284 188 350 169 470 125" fill="none" stroke="#ff3045" stroke-width="3" stroke-linecap="round"></path>
+              <path d="M30 214C115 213 180 211 252 205" fill="none" stroke="#39e7f2" stroke-width="2" stroke-linecap="round"></path>
+              <text x="393" y="154" fill="#ff3045" font-family="monospace" font-size="8">ATTACK ENERGY</text>
+              <text x="278" y="221" fill="#39e7f2" font-family="monospace" font-size="8">CONSERVE ENERGY</text>
+            </svg>
+          </figure>
+          <div class="gates" aria-label="Three evidence gates">
+            <article class="gate">
+              <span class="gate-no">01</span>
+              <div><strong>Replay</strong><p>The same telemetry reproduces the same decision.</p></div>
+            </article>
+            <article class="gate">
+              <span class="gate-no">02</span>
+              <div><strong>Strategy</strong><p>Paired trials beat the baseline without hiding tail risk.</p></div>
+            </article>
+            <article class="gate">
+              <span class="gate-no">03</span>
+              <div><strong>Hardware</strong><p>Every command is acknowledged and produces an INA219 energy trace.</p></div>
+            </article>
+          </div>
         </div>
-        <div class="closing-grid">
-          <article class="closing-claim">
-            <div class="claim-line"><span>Calibrated.</span> Counterfactual. Measured.</div>
-            <p>JouleIQ learns the long-horizon opportunity cost of electrical energy from a fast twin calibrated against official 2026 game telemetry, turns it into risk-aware advice, and validates the same energy loop on real hardware.</p>
-          </article>
-          <aside class="credibility" aria-label="Credibility boundary">
-            <strong>What we claim</strong>
-            <p>A game-calibrated strategic research environment and a real end-to-end electrical proof, not team-grade F1 physics.</p>
-          </aside>
-        </div>
-        <div class="final-line">
-          <strong>The win is not a black box. It is a decision you can defend.</strong>
-          <span>JouleIQ / Race intelligence</span>
-        </div>
+        <blockquote class="closing-claim">
+          <strong>Vmax makes energy strategy explainable, risk-aware, and physically testable.</strong>
+          <p>We claim a defensible decision loop calibrated against game telemetry and verified on real hardware, not F1 powertrain fidelity.</p>
+        </blockquote>
       </section>
     </main>
-    <aside class="nav-hint" aria-label="Presentation navigation hint"><kbd>&larr;</kbd><kbd>&rarr;</kbd><span>Navigate</span><kbd>O</kbd><span>Overview</span><kbd>F</kbd><span>Fullscreen</span></aside>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script>
@@ -1904,9 +1022,7 @@
       margin: 0,
       minScale: 0.2,
       maxScale: 1.5,
-      controls: true,
-      controlsLayout: "edges",
-      controlsTutorial: false,
+      controls: false,
       progress: true,
       scrollActivationWidth: 0,
       slideNumber: "c/t",
@@ -1914,12 +1030,12 @@
       hash: true,
       history: true,
       keyboard: true,
-      overview: true,
+      overview: false,
       center: false,
       touch: true,
       transition: reduceMotion ? "none" : "fade",
       backgroundTransition: reduceMotion ? "none" : "fade",
-      autoAnimate: !reduceMotion,
+      autoAnimate: false,
       pdfSeparateFragments: false
     });
   </script>
