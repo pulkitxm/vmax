@@ -408,19 +408,19 @@ function mirror(
 export function createF1CarModel(): F1CarModel {
   const root = new THREE.Group();
   const wheels: THREE.Group[] = [];
-  const whitePaint = new THREE.MeshPhysicalMaterial({
-    color: 0xe8e5df,
+  const primaryRed = new THREE.MeshPhysicalMaterial({
+    color: 0xa9001c,
     metalness: 0.18,
-    roughness: 0.19,
-    clearcoat: 1,
-    clearcoatRoughness: 0.08,
-  });
-  const redPaint = new THREE.MeshPhysicalMaterial({
-    color: 0xe62035,
-    metalness: 0.3,
     roughness: 0.2,
     clearcoat: 1,
-    clearcoatRoughness: 0.07,
+    clearcoatRoughness: 0.075,
+  });
+  const warmWhite = new THREE.MeshPhysicalMaterial({
+    color: 0xf4f0e8,
+    metalness: 0.14,
+    roughness: 0.2,
+    clearcoat: 1,
+    clearcoatRoughness: 0.09,
   });
   const darkRed = new THREE.MeshPhysicalMaterial({
     color: 0x770d19,
@@ -505,7 +505,7 @@ export function createF1CarModel(): F1CarModel {
         { z: 1.92, width: 0.25, height: 0.2, y: -0.08 },
         { z: 2.52, width: 0.12, height: 0.12, y: -0.1 },
       ]),
-      whitePaint,
+      primaryRed,
       [0, 0, 0],
     ),
     mesh(
@@ -518,7 +518,7 @@ export function createF1CarModel(): F1CarModel {
         ],
         10,
       ),
-      redPaint,
+      warmWhite,
       [0, 0, 0],
     ),
     mesh(
@@ -528,7 +528,7 @@ export function createF1CarModel(): F1CarModel {
         { z: -0.5, width: 0.58, height: 0.76, y: 0.36 },
         { z: -0.08, width: 0.44, height: 0.52, y: 0.34 },
       ]),
-      whitePaint,
+      primaryRed,
       [0, 0, 0],
     ),
     mesh(
@@ -543,7 +543,7 @@ export function createF1CarModel(): F1CarModel {
         ],
         0.075,
       ),
-      redPaint,
+      warmWhite,
       [0, 0, 0],
     ),
     mesh(
@@ -552,7 +552,7 @@ export function createF1CarModel(): F1CarModel {
         { z: -0.54, width: 0.45, height: 0.5, y: 0.72 },
         { z: -0.23, width: 0.39, height: 0.45, y: 0.67 },
       ]),
-      redPaint,
+      warmWhite,
       [0, 0, 0],
     ),
     scaledMesh(
@@ -573,12 +573,12 @@ export function createF1CarModel(): F1CarModel {
           { z: -0.08, width: 0.66, height: 0.48, y: 0.05 },
           { z: 0.43, width: 0.48, height: 0.34, y: 0.02 },
         ]),
-        whitePaint,
+        primaryRed,
         [side * 0.49, 0, 0],
       ),
       mesh(
         taperedBox(0.36, 0.5, 0.055, 0.075, 1.32),
-        redPaint,
+        warmWhite,
         [side * 0.62, 0.09, -0.42],
         [0, 0, side * 0.035],
       ),
@@ -611,7 +611,7 @@ export function createF1CarModel(): F1CarModel {
         [side * 0.64, -0.02, -0.47],
         [0, 0, side * 0.025],
       ),
-      mirror(side, redPaint, glass, carbonEdge),
+      mirror(side, warmWhite, glass, carbonEdge),
       nameDecal(side),
     );
 
@@ -635,7 +635,7 @@ export function createF1CarModel(): F1CarModel {
       [0.68, 0.3, 0.52],
       [Math.PI / 2, 0, 0],
     ),
-    mesh(new THREE.SphereGeometry(0.205, 28, 18), redPaint, [0, 0.59, 0.02]),
+    mesh(new THREE.SphereGeometry(0.205, 28, 18), warmWhite, [0, 0.59, 0.02]),
     mesh(
       new THREE.SphereGeometry(0.211, 28, 12, 0, Math.PI * 2, 0, 1.25),
       visor,
@@ -669,13 +669,13 @@ export function createF1CarModel(): F1CarModel {
     ),
     mesh(
       taperedBox(1.83, 2.02, 0.045, 0.055, 0.33),
-      whitePaint,
+      primaryRed,
       [0, -0.16, 2.43],
       [-0.05, 0, 0],
     ),
     mesh(
       taperedBox(1.66, 1.88, 0.04, 0.05, 0.28),
-      redPaint,
+      warmWhite,
       [0, -0.08, 2.34],
       [-0.12, 0, 0],
     ),
@@ -706,7 +706,7 @@ export function createF1CarModel(): F1CarModel {
   root.add(
     mesh(
       taperedBox(1.58, 1.5, 0.12, 0.1, 0.38),
-      redPaint,
+      warmWhite,
       [0, 0.77, -1.58],
       [-0.09, 0, 0],
     ),
@@ -792,7 +792,7 @@ export function createF1CarModel(): F1CarModel {
       rim,
       alloy,
       brake,
-      redPaint,
+      darkRed,
     );
     wheels.push(wheelGroup);
     root.add(wheelGroup);
