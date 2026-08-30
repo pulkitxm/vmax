@@ -1,11 +1,24 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vmax.pulkit.page"),
-  title: "Vmax | Energy-Aware Race Strategy",
+  applicationName: "Vmax",
+  title: {
+    default: "Vmax | Every Joule Changes the Race",
+    template: "%s | Vmax",
+  },
   description:
     "Vmax develops the JouleIQ approach to price the future value of energy and make explainable race-strategy decisions.",
+  alternates: { canonical: "/" },
+  keywords: [
+    "Vmax",
+    "JouleIQ",
+    "race strategy",
+    "energy management",
+    "F1 25 telemetry",
+    "counterfactual planning",
+  ],
   openGraph: {
     title: "Vmax | Energy-Aware Race Strategy",
     description:
@@ -31,9 +44,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#07080a",
+  colorScheme: "dark light",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark" data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );
