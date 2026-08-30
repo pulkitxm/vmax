@@ -9,6 +9,7 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
       </Link>
       <nav className="primary-nav" aria-label="Primary navigation">
         <Link href="/how-it-works">How it works</Link>
+        <Link href="/laps">Lap status</Link>
         <Link href="/docs">Docs</Link>
         <Link href="/faq">FAQ</Link>
       </nav>
@@ -20,6 +21,7 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
         <summary aria-label="Open navigation">Menu</summary>
         <nav aria-label="Mobile navigation">
           <Link href="/how-it-works">How it works</Link>
+          <Link href="/laps">Lap status</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/dashboard">Dashboard</Link>
