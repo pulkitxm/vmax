@@ -93,6 +93,29 @@ function rod(
   return result;
 }
 
+function exhaust(
+  start: THREE.Vector3,
+  end: THREE.Vector3,
+  pipe: THREE.Material,
+  tip: THREE.Material,
+) {
+  const result = new THREE.Group();
+  const direction = end.clone().sub(start).normalize();
+  const tipEnd = end.clone().addScaledVector(direction, 0.2);
+  const midpoint = end.clone().add(tipEnd).multiplyScalar(0.5);
+  const flare = mesh(
+    new THREE.CylinderGeometry(0.1, 0.06, end.distanceTo(tipEnd), 8),
+    tip,
+    [midpoint.x, midpoint.y, midpoint.z],
+  );
+  flare.quaternion.setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0),
+    direction,
+  );
+  result.add(rod(start, end, 0.055, pipe), flare);
+  return result;
+}
+
 function wheel(
   radius: number,
   width: number,
@@ -129,8 +152,9 @@ function wheel(
 
 function createDriver(
   suit: THREE.Material,
-  helmet: THREE.Material,
-  visor: THREE.Material,
+  headMaterial: THREE.Material,
+  face: THREE.Material,
+  detail: THREE.Material,
   dark: THREE.Material,
 ) {
   const driver = new THREE.Group();
@@ -143,43 +167,66 @@ function createDriver(
     [-0.34, 0, 0],
   );
 
-  steering.position.set(0, 0.78, 0.42);
+  steering.position.set(0, 0.76, 0.34);
   steering.add(steeringWheel);
 
-  head.position.set(0, 1.21, -0.08);
+  const facePatch = mesh(
+    new THREE.SphereGeometry(0.34, 12, 8),
+    face,
+    [0, -0.01, 0.25],
+  );
+  facePatch.scale.set(0.82, 0.72, 0.28);
+  head.position.set(0, 1.23, -0.16);
   head.add(
-    mesh(new THREE.IcosahedronGeometry(0.35, 2), helmet, [0, 0, 0]),
+    mesh(new THREE.IcosahedronGeometry(0.38, 2), headMaterial, [0, 0, 0]),
+    mesh(new THREE.IcosahedronGeometry(0.13, 1), detail, [-0.35, 0.02, 0]),
+    mesh(new THREE.IcosahedronGeometry(0.13, 1), detail, [0.35, 0.02, 0]),
+    facePatch,
     mesh(
-      new THREE.BoxGeometry(0.42, 0.16, 0.09),
-      visor,
-      [0, 0.03, 0.3],
-      [-0.08, 0, 0],
+      new THREE.SphereGeometry(0.115, 12, 8),
+      face,
+      [-0.12, 0.08, 0.34],
     ),
     mesh(
-      new THREE.BoxGeometry(0.12, 0.08, 0.07),
-      suit,
-      [0, -0.2, 0.31],
-      [-0.08, 0, 0],
+      new THREE.SphereGeometry(0.115, 12, 8),
+      face,
+      [0.12, 0.08, 0.34],
+    ),
+    mesh(
+      new THREE.SphereGeometry(0.052, 10, 7),
+      dark,
+      [-0.12, 0.08, 0.435],
+    ),
+    mesh(
+      new THREE.SphereGeometry(0.052, 10, 7),
+      dark,
+      [0.12, 0.08, 0.435],
+    ),
+    mesh(
+      new THREE.TorusGeometry(0.105, 0.025, 6, 12, Math.PI),
+      dark,
+      [0, -0.12, 0.43],
+      [0, 0, Math.PI],
     ),
   );
 
   driver.add(
-    mesh(new THREE.CapsuleGeometry(0.24, 0.34, 4, 10), suit, [0, 0.69, -0.2]),
+    mesh(new THREE.CapsuleGeometry(0.24, 0.3, 4, 10), suit, [0, 0.67, -0.22]),
     mesh(
-      new THREE.CapsuleGeometry(0.32, 0.42, 4, 10),
+      new THREE.CapsuleGeometry(0.31, 0.4, 4, 10),
       dark,
-      [0, 0.64, -0.48],
+      [0, 0.61, -0.5],
       [0.12, 0, 0],
     ),
     rod(
-      new THREE.Vector3(-0.2, 0.87, -0.08),
-      new THREE.Vector3(-0.16, 0.79, 0.4),
+      new THREE.Vector3(-0.2, 0.84, -0.1),
+      new THREE.Vector3(-0.16, 0.77, 0.32),
       0.07,
       suit,
     ),
     rod(
-      new THREE.Vector3(0.2, 0.87, -0.08),
-      new THREE.Vector3(0.16, 0.79, 0.4),
+      new THREE.Vector3(0.2, 0.84, -0.1),
+      new THREE.Vector3(0.16, 0.77, 0.32),
       0.07,
       suit,
     ),
@@ -216,12 +263,10 @@ export function createKartModel(palette: KartPalette): KartModel {
     metalness: 0.12,
     flatShading: true,
   });
-  const visor = new THREE.MeshPhysicalMaterial({
+  const detail = new THREE.MeshStandardMaterial({
     color: palette.visor,
-    roughness: 0.13,
-    metalness: 0.64,
-    clearcoat: 1,
-    clearcoatRoughness: 0.08,
+    roughness: 0.5,
+    flatShading: true,
   });
   const dark = new THREE.MeshStandardMaterial({
     color: 0x111419,
@@ -241,59 +286,93 @@ export function createKartModel(palette: KartPalette): KartModel {
     metalness: 0.78,
     flatShading: true,
   });
+  const face = new THREE.MeshStandardMaterial({
+    color: 0xfff6e8,
+    roughness: 0.62,
+    flatShading: true,
+  });
+  const pipe = new THREE.MeshStandardMaterial({
+    color: 0xe6eef0,
+    roughness: 0.48,
+    metalness: 0.42,
+    flatShading: true,
+  });
+
+  const cowl = mesh(
+    new THREE.SphereGeometry(0.71, 12, 8),
+    paint,
+    [0, 0.34, 0.76],
+  );
+  cowl.scale.set(0.62, 0.5, 0.86);
+  const stripe = mesh(
+    new THREE.SphereGeometry(0.715, 12, 8),
+    accent,
+    [0, 0.345, 0.765],
+  );
+  stripe.scale.set(0.15, 0.52, 0.87);
 
   root.add(
-    mesh(new THREE.BoxGeometry(1.78, 0.18, 2.18), dark, [0, 0.02, 0]),
-    mesh(taperedBox(0.55, 1.1, 0.42, 0.3, 1.48), paint, [0, 0.32, 0.48]),
-    mesh(taperedBox(0.18, 0.58, 0.21, 0.38, 0.84), accent, [0, 0.48, 1.42]),
-    mesh(taperedBox(1.28, 1.4, 0.39, 0.44, 0.82), paint, [0, 0.28, -0.7]),
-    mesh(new THREE.BoxGeometry(1.88, 0.12, 0.22), dark, [0, -0.02, 1.61]),
-    mesh(new THREE.BoxGeometry(1.74, 0.11, 0.2), dark, [0, 0.04, -1.31]),
+    mesh(new THREE.BoxGeometry(1.64, 0.16, 2.18), dark, [0, 0.02, 0.02]),
+    mesh(taperedBox(1.08, 1.3, 0.26, 0.34, 0.88), paint, [0, 0.24, -0.56]),
+    mesh(new THREE.BoxGeometry(0.68, 0.42, 0.62), rim, [0, 0.38, -0.94]),
+    mesh(
+      new THREE.CapsuleGeometry(0.1, 1.38, 4, 10),
+      dark,
+      [0, 0.02, 1.47],
+      [0, 0, Math.PI / 2],
+    ),
+    mesh(
+      new THREE.CapsuleGeometry(0.09, 1.28, 4, 10),
+      dark,
+      [0, 0.08, -1.29],
+      [0, 0, Math.PI / 2],
+    ),
+    cowl,
+    stripe,
   );
 
   for (const side of [-1, 1]) {
     root.add(
       mesh(
-        new THREE.BoxGeometry(0.34, 0.34, 1.08),
+        new THREE.BoxGeometry(0.28, 0.25, 0.92),
         paint,
-        [side * 0.72, 0.29, -0.15],
-        [0, 0, side * -0.06],
+        [side * 0.63, 0.25, -0.25],
       ),
       mesh(
-        new THREE.BoxGeometry(0.14, 0.14, 1.2),
+        new THREE.BoxGeometry(0.1, 0.11, 0.96),
         accent,
-        [side * 0.86, 0.2, -0.08],
+        [side * 0.79, 0.16, -0.25],
       ),
       mesh(
-        new THREE.BoxGeometry(0.38, 0.13, 0.13),
-        dark,
-        [side * 0.91, 0.08, 1.58],
+        new THREE.BoxGeometry(0.46, 0.28, 0.58),
+        accent,
+        [side * 0.79, 0.27, -0.65],
       ),
       mesh(
-        new THREE.BoxGeometry(0.38, 0.13, 0.13),
-        dark,
-        [side * 0.91, 0.1, -1.29],
+        new THREE.BoxGeometry(0.45, 0.13, 0.28),
+        accent,
+        [side * 0.79, 0.22, 0.75],
       ),
       rod(
-        new THREE.Vector3(side * 0.28, 0.22, 0.7),
-        new THREE.Vector3(side * 0.82, 0.04, 0.92),
-        0.025,
-        rim,
+        new THREE.Vector3(side * 0.32, 0.17, 0.48),
+        new THREE.Vector3(side * 0.8, 0.01, 0.78),
+        0.03,
+        pipe,
       ),
       rod(
-        new THREE.Vector3(side * 0.36, 0.2, -0.56),
-        new THREE.Vector3(side * 0.82, 0.04, -0.84),
-        0.028,
-        rim,
+        new THREE.Vector3(side * 0.34, 0.16, -0.48),
+        new THREE.Vector3(side * 0.8, 0.01, -0.72),
+        0.032,
+        pipe,
       ),
     );
   }
 
   const wheelSpecs = [
-    { radius: 0.33, width: 0.26, x: 0.94, z: 0.94 },
-    { radius: 0.33, width: 0.26, x: -0.94, z: 0.94 },
-    { radius: 0.38, width: 0.31, x: 0.94, z: -0.84 },
-    { radius: 0.38, width: 0.31, x: -0.94, z: -0.84 },
+    { radius: 0.29, width: 0.25, x: 0.88, z: 0.78 },
+    { radius: 0.29, width: 0.25, x: -0.88, z: 0.78 },
+    { radius: 0.36, width: 0.32, x: 0.88, z: -0.72 },
+    { radius: 0.36, width: 0.32, x: -0.88, z: -0.72 },
   ];
 
   for (const spec of wheelSpecs) {
@@ -312,22 +391,28 @@ export function createKartModel(palette: KartPalette): KartModel {
 
   for (const side of [-1, 1]) {
     root.add(
-      mesh(
-        new THREE.CylinderGeometry(0.09, 0.12, 0.58, 8),
-        rim,
-        [side * 0.34, 0.58, -1.12],
-        [Math.PI / 2, 0, 0],
-      ),
-      mesh(
-        new THREE.CylinderGeometry(0.11, 0.11, 0.18, 8),
+      exhaust(
+        new THREE.Vector3(side * 0.26, 0.43, -0.78),
+        new THREE.Vector3(side * 0.4, 0.7, -1.08),
+        pipe,
         dark,
-        [side * 0.34, 0.58, -1.45],
-        [Math.PI / 2, 0, 0],
+      ),
+      exhaust(
+        new THREE.Vector3(side * 0.35, 0.37, -0.76),
+        new THREE.Vector3(side * 0.58, 0.55, -1.08),
+        pipe,
+        dark,
       ),
     );
   }
 
-  const { driver, steering } = createDriver(suit, helmet, visor, dark);
+  const { driver, steering } = createDriver(
+    suit,
+    helmet,
+    face,
+    detail,
+    dark,
+  );
   root.add(driver);
   root.position.y = 0.38;
   return { root, wheels, steering, driver };

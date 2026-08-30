@@ -19,8 +19,8 @@ type KartLayout = {
 const kartLayouts: KartLayout[] = [
   {
     palette: {
-      paint: 0xf1354a,
-      accent: 0x35e7f2,
+      paint: 0x147df5,
+      accent: 0xff3648,
       suit: 0xf7f2e8,
       helmet: 0xf1354a,
       visor: 0x14242b,
@@ -32,8 +32,8 @@ const kartLayouts: KartLayout[] = [
   },
   {
     palette: {
-      paint: 0x35dce8,
-      accent: 0xf7f2e8,
+      paint: 0x147df5,
+      accent: 0xff3648,
       suit: 0x203845,
       helmet: 0xf7f2e8,
       visor: 0x0e2e37,
@@ -45,8 +45,8 @@ const kartLayouts: KartLayout[] = [
   },
   {
     palette: {
-      paint: 0xf4b942,
-      accent: 0xff4b5f,
+      paint: 0x147df5,
+      accent: 0xff3648,
       suit: 0x2c2530,
       helmet: 0xf4b942,
       visor: 0x241a26,
@@ -58,8 +58,8 @@ const kartLayouts: KartLayout[] = [
   },
   {
     palette: {
-      paint: 0x8c69ff,
-      accent: 0x35e7f2,
+      paint: 0x147df5,
+      accent: 0xff3648,
       suit: 0x29203f,
       helmet: 0xa991ff,
       visor: 0x171225,
