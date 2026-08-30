@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 import { createF1CarModel } from "@/components/f1-car-model";
 
@@ -120,15 +121,45 @@ export function RaceCarScene() {
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.04;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setClearColor(0x000000, 0);
 
-    scene.add(carRig);
-    scene.add(new THREE.HemisphereLight(0xddeeff, 0x08090c, 2.6));
+    const roomEnvironment = new RoomEnvironment();
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const environment = pmremGenerator.fromScene(
+      roomEnvironment,
+      0.035,
+    ).texture;
+    scene.environment = environment;
+    roomEnvironment.dispose();
+    pmremGenerator.dispose();
 
-    const keyLight = new THREE.DirectionalLight(0xf7f2e8, 5.2);
-    keyLight.position.set(3.5, 5.5, 4.5);
+    scene.add(carRig);
+    scene.add(new THREE.HemisphereLight(0xe8f4ff, 0x07080a, 2.1));
+
+    const keyLight = new THREE.DirectionalLight(0xfff8ed, 4.8);
+    keyLight.position.set(4.5, 6.5, 5.4);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.camera.near = 0.5;
+    keyLight.shadow.camera.far = 18;
+    keyLight.shadow.camera.left = -4;
+    keyLight.shadow.camera.right = 4;
+    keyLight.shadow.camera.top = 4;
+    keyLight.shadow.camera.bottom = -4;
+    keyLight.shadow.bias = -0.0002;
+    keyLight.shadow.normalBias = 0.025;
     scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x8fd8ff, 2.1);
+    fillLight.position.set(-4, 2.6, 3.2);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xff5a68, 2.8);
+    rimLight.position.set(2.2, 3.4, -4.2);
+    scene.add(rimLight);
 
     const cyanLight = new THREE.PointLight(0x39e7f2, 18, 8, 2);
     cyanLight.position.set(-2.8, 0.7, 1.4);
@@ -168,8 +199,21 @@ export function RaceCarScene() {
       }),
     );
     shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = -0.6;
+    shadow.position.y = -0.585;
     carRig.add(shadow);
+
+    const shadowCatcher = new THREE.Mesh(
+      new THREE.PlaneGeometry(7, 7),
+      new THREE.ShadowMaterial({
+        color: 0x000000,
+        opacity: 0.34,
+        transparent: true,
+      }),
+    );
+    shadowCatcher.rotation.x = -Math.PI / 2;
+    shadowCatcher.position.y = -0.61;
+    shadowCatcher.receiveShadow = true;
+    carRig.add(shadowCatcher);
 
     const { root: model, wheels } = createF1CarModel();
     wheelMeshes.push(...wheels);
@@ -329,6 +373,7 @@ export function RaceCarScene() {
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("pointermove", updatePointer);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      environment.dispose();
       disposeObject(scene);
       renderer.dispose();
     };
