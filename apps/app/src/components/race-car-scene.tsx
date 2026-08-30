@@ -113,6 +113,7 @@ export function RaceCarScene() {
     let targetProgress = 0;
     let progress = 0;
     let elapsed = 0;
+    let compact = window.innerWidth < 560;
     let previousTime = performance.now();
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -184,6 +185,10 @@ export function RaceCarScene() {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      compact = window.innerWidth < 560;
+      model.scale.setScalar(
+        compact ? 0.5 : window.innerWidth < 900 ? 0.64 : 0.72,
+      );
     };
 
     const updateProgress = () => {
@@ -210,7 +215,11 @@ export function RaceCarScene() {
       pointer.lerp(pointerTarget, ease * 0.72);
 
       carRig.position.set(
-        THREE.MathUtils.lerp(0.82, -0.18, progress) + pointer.x * 0.16,
+        THREE.MathUtils.lerp(
+          compact ? 0.26 : 0.82,
+          compact ? -0.34 : -0.18,
+          progress,
+        ) + pointer.x * 0.16,
         -0.02 + Math.sin(elapsed * 1.2) * 0.018,
         THREE.MathUtils.lerp(0.1, 0.5, progress),
       );

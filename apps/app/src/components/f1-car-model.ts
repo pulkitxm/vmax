@@ -304,6 +304,5 @@ export function createF1CarModel(): F1CarModel {
   }
 
   root.position.y = 0.02;
-  root.scale.setScalar(0.92);
   return { root, wheels };
 }
