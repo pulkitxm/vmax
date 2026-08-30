@@ -207,11 +207,11 @@ function halo(material: THREE.Material) {
     "centripetal",
   );
   result.add(
-    new THREE.Mesh(new THREE.TubeGeometry(ringPath, 56, 0.034, 10), material),
+    new THREE.Mesh(new THREE.TubeGeometry(ringPath, 56, 0.026, 10), material),
     rod(
       new THREE.Vector3(0, 0.69, 0.5),
       new THREE.Vector3(0, 0.25, 0.77),
-      0.035,
+      0.028,
       material,
     ),
   );
@@ -319,25 +319,25 @@ function mirror(
   carbon: THREE.Material,
 ) {
   const result = new THREE.Group();
-  const x = side * 0.66;
+  const x = side * 0.65;
   result.add(
     rod(
       new THREE.Vector3(side * 0.38, 0.43, 0.2),
-      new THREE.Vector3(x, 0.49, 0.29),
-      0.015,
+      new THREE.Vector3(x, 0.47, 0.29),
+      0.012,
       carbon,
       8,
     ),
     scaledMesh(
-      new THREE.SphereGeometry(0.18, 20, 12),
+      new THREE.SphereGeometry(0.125, 20, 12),
       shell,
-      [x, 0.5, 0.31],
-      [1.05, 0.38, 0.52],
+      [x, 0.48, 0.31],
+      [1.15, 0.42, 0.58],
     ),
     scaledMesh(
-      new THREE.CircleGeometry(0.14, 20),
+      new THREE.CircleGeometry(0.095, 20),
       glass,
-      [x + side * 0.17, 0.5, 0.31],
+      [x + side * 0.125, 0.48, 0.31],
       [1, 0.8, 1],
       [0, side * Math.PI * 0.5, 0],
     ),
@@ -349,7 +349,7 @@ export function createF1CarModel(): F1CarModel {
   const root = new THREE.Group();
   const wheels: THREE.Group[] = [];
   const whitePaint = new THREE.MeshPhysicalMaterial({
-    color: 0xf2f0eb,
+    color: 0xe8e5df,
     metalness: 0.18,
     roughness: 0.19,
     clearcoat: 1,
@@ -522,12 +522,17 @@ export function createF1CarModel(): F1CarModel {
         [side * 0.62, 0.09, -0.42],
         [0, 0, side * 0.035],
       ),
-      scaledMesh(
-        new THREE.CapsuleGeometry(0.16, 0.26, 6, 18),
+      mesh(
+        loftGeometry(
+          [
+            { z: 0.29, width: 0.22, height: 0.13, y: 0.12 },
+            { z: 0.4, width: 0.28, height: 0.16, y: 0.12 },
+            { z: 0.5, width: 0.22, height: 0.12, y: 0.11 },
+          ],
+          14,
+        ),
         carbon,
-        [side * 0.71, 0.12, 0.4],
-        [1.08, 0.7, 0.44],
-        [Math.PI / 2, 0, 0],
+        [side * 0.67, 0, 0],
       ),
       mesh(taperedBox(0.07, 0.1, 0.055, 0.075, 2.15), carbonEdge, [
         side * 0.91,
@@ -539,6 +544,12 @@ export function createF1CarModel(): F1CarModel {
         carbon,
         [side * 0.84, -0.03, 0.55],
         [0, side * 0.09, side * -0.07],
+      ),
+      mesh(
+        taperedBox(0.27, 0.43, 0.065, 0.09, 1.16),
+        darkRed,
+        [side * 0.64, -0.02, -0.47],
+        [0, 0, side * 0.025],
       ),
       mirror(side, redPaint, glass, carbonEdge),
     );
@@ -559,8 +570,8 @@ export function createF1CarModel(): F1CarModel {
     scaledMesh(
       new THREE.CapsuleGeometry(0.2, 0.28, 7, 20),
       darkRed,
-      [0, 0.35, -0.01],
-      [0.9, 1, 0.78],
+      [0, 0.24, -0.01],
+      [0.68, 0.3, 0.52],
       [Math.PI / 2, 0, 0],
     ),
     mesh(new THREE.SphereGeometry(0.205, 28, 18), redPaint, [0, 0.59, 0.02]),
@@ -618,12 +629,12 @@ export function createF1CarModel(): F1CarModel {
   for (const side of [-1, 1]) {
     root.add(
       mesh(
-        new THREE.BoxGeometry(0.06, 0.38, 0.56),
-        redPaint,
-        [side * 1.03, -0.06, 2.46],
+        new THREE.BoxGeometry(0.055, 0.27, 0.48),
+        darkRed,
+        [side * 1.03, -0.09, 2.46],
         [0, 0, side * 0.05],
       ),
-      mesh(new THREE.BoxGeometry(0.025, 0.22, 0.47), carbon, [
+      mesh(new THREE.BoxGeometry(0.025, 0.17, 0.4), carbon, [
         side * 0.88,
         -0.06,
         2.48,
@@ -654,12 +665,12 @@ export function createF1CarModel(): F1CarModel {
 
   for (const side of [-1, 1]) {
     root.add(
-      mesh(new THREE.BoxGeometry(0.075, 0.82, 0.48), whitePaint, [
+      mesh(new THREE.BoxGeometry(0.07, 0.68, 0.42), darkRed, [
         side * 0.76,
         0.4,
         -1.56,
       ]),
-      mesh(new THREE.BoxGeometry(0.04, 0.58, 0.34), carbon, [
+      mesh(new THREE.BoxGeometry(0.04, 0.48, 0.3), carbon, [
         side * 0.68,
         0.38,
         -1.5,
