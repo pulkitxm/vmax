@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { createPageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
-  description:
-    "Answers about Vmax, JouleIQ, F1 25 telemetry, reinforcement learning, energy strategy, risk, hardware validation, and project scope.",
-  alternates: { canonical: "/faq" },
-};
+export const metadata = createPageMetadata(
+  "Frequently Asked Questions",
+  "Answers about Vmax, JouleIQ, F1 25 telemetry, reinforcement learning, energy strategy, risk, hardware validation, and project scope.",
+  "/faq",
+);
 
 const faqs = [
   [

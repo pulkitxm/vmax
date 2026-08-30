@@ -1,16 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ScrollMotion } from "@/components/scroll-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { createPageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "How JouleIQ Works",
-  description:
-    "Follow the JouleIQ decision loop from F1 25 telemetry through counterfactual planning, risk analysis, engineer advice, and physical energy measurement.",
-  alternates: { canonical: "/how-it-works" },
-};
+export const metadata = createPageMetadata(
+  "How JouleIQ Works",
+  "Follow the JouleIQ decision loop from F1 25 telemetry through counterfactual planning, risk analysis, engineer advice, and physical energy measurement.",
+  "/how-it-works",
+);
 
 const actions = [
   "Conserve",

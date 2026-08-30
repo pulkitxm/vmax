@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { createPageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "JouleIQ Documentation",
-  description:
-    "Technical documentation for the JouleIQ telemetry, digital twin, decision intelligence, embedded hardware, and validation architecture.",
-  alternates: { canonical: "/docs" },
-};
+export const metadata = createPageMetadata(
+  "JouleIQ Documentation",
+  "Technical documentation for the JouleIQ telemetry, digital twin, decision intelligence, embedded hardware, and validation architecture.",
+  "/docs",
+);
 
 const sections = [
   ["overview", "System overview"],

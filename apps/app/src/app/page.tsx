@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { DecisionStory } from "@/components/decision-story";
@@ -6,9 +7,26 @@ import { ScrollMotion } from "@/components/scroll-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Vmax",
+    url: "https://vmax.pulkit.page",
+    description:
+      "Vmax builds JouleIQ, an explainable energy-aware race-intelligence system.",
+  };
+
   return (
     <main className="site-shell">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ScrollMotion />
       <SiteHeader />
 
