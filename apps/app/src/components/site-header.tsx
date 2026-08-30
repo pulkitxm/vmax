@@ -12,9 +12,9 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
         <Link href="/docs">Docs</Link>
         <Link href="/faq">FAQ</Link>
       </nav>
-      <Link className="header-cta" href="/docs">
-        Explore JouleIQ
-        <span aria-hidden="true">↘</span>
+      <Link className="header-cta" href="/dashboard">
+        Open dashboard
+        <span aria-hidden="true">↗</span>
       </Link>
       <details className="mobile-menu">
         <summary aria-label="Open navigation">Menu</summary>
@@ -22,6 +22,7 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
           <Link href="/how-it-works">How it works</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/faq">FAQ</Link>
+          <Link href="/dashboard">Dashboard</Link>
           <Link href="/presentation">Presentation</Link>
         </nav>
       </details>

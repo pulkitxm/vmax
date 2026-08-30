@@ -11,6 +11,7 @@ export function SiteFooter() {
         <p>Race intelligence for the energy era.</p>
       </div>
       <nav aria-label="Footer navigation">
+        <Link href="/dashboard">Dashboard</Link>
         <Link href="/how-it-works">How it works</Link>
         <Link href="/docs">Documentation</Link>
         <Link href="/faq">FAQ</Link>
