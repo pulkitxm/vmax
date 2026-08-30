@@ -168,7 +168,33 @@
       clip-path: polygon(20% 0, 100% 0, 80% 100%, 0 100%);
     }
 
+    .pptx-download {
+      margin-left: auto;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .pptx-download:hover,
+    .pptx-download:focus-visible {
+      color: var(--white);
+    }
+
+    .pptx-download:focus-visible {
+      outline: 1px solid var(--cyan);
+      outline-offset: 4px;
+    }
+
+    .export-mode .pptx-download {
+      display: none;
+    }
+
     .page-no {
+      margin-left: 18px;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 9px;
@@ -783,6 +809,7 @@
       <section aria-labelledby="slide-1-title">
         <header class="topbar">
           <div class="vmax" aria-label="Vmax">VMAX</div>
+          <a class="pptx-download" href="./vmax-jouleiq.pptx" download>Download PPTX</a>
           <span class="page-no">01 / 05</span>
         </header>
         <div class="intro-grid">
@@ -829,6 +856,7 @@
       <section aria-labelledby="slide-2-title">
         <header class="topbar">
           <div class="vmax" aria-label="Vmax">VMAX</div>
+          <a class="pptx-download" href="./vmax-jouleiq.pptx" download>Download PPTX</a>
           <span class="page-no">02 / 05</span>
         </header>
         <div class="section-heading">
@@ -871,6 +899,7 @@
       <section aria-labelledby="slide-3-title">
         <header class="topbar">
           <div class="vmax" aria-label="Vmax">VMAX</div>
+          <a class="pptx-download" href="./vmax-jouleiq.pptx" download>Download PPTX</a>
           <span class="page-no">03 / 05</span>
         </header>
         <div class="section-heading">
@@ -908,6 +937,7 @@
       <section aria-labelledby="slide-4-title">
         <header class="topbar">
           <div class="vmax" aria-label="Vmax">VMAX</div>
+          <a class="pptx-download" href="./vmax-jouleiq.pptx" download>Download PPTX</a>
           <span class="page-no">04 / 05</span>
         </header>
         <div class="section-heading">
@@ -956,6 +986,7 @@
       <section aria-labelledby="slide-5-title">
         <header class="topbar">
           <div class="vmax" aria-label="Vmax">VMAX</div>
+          <a class="pptx-download" href="./vmax-jouleiq.pptx" download>Download PPTX</a>
           <span class="page-no">05 / 05</span>
         </header>
         <div class="section-heading">
@@ -1015,6 +1046,9 @@
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script>
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const exportMode = new URLSearchParams(window.location.search).has("export");
+
+    document.body.classList.toggle("export-mode", exportMode);
 
     Reveal.initialize({
       width: 960,
@@ -1023,9 +1057,9 @@
       minScale: 0.2,
       maxScale: 1.5,
       controls: false,
-      progress: true,
+      progress: !exportMode,
       scrollActivationWidth: 0,
-      slideNumber: "c/t",
+      slideNumber: exportMode ? false : "c/t",
       showSlideNumber: "all",
       hash: true,
       history: true,
@@ -1033,8 +1067,8 @@
       overview: false,
       center: false,
       touch: true,
-      transition: reduceMotion ? "none" : "fade",
-      backgroundTransition: reduceMotion ? "none" : "fade",
+      transition: exportMode || reduceMotion ? "none" : "fade",
+      backgroundTransition: exportMode || reduceMotion ? "none" : "fade",
       autoAnimate: false,
       pdfSeparateFragments: false
     });
