@@ -248,9 +248,9 @@ function nameDecal(side: number) {
   context.lineJoin = "round";
   context.lineWidth = 14;
   context.strokeStyle = "#07080a";
-  context.strokeText("HARKIRAT", 512, 134);
+  context.strokeText("VMAX", 512, 134);
   context.fillStyle = "#f7f2e8";
-  context.fillText("HARKIRAT", 512, 134);
+  context.fillText("VMAX", 512, 134);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;

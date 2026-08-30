@@ -61,10 +61,10 @@ export default function Home() {
           </div>
           <div
             className="hero-model-label"
-            aria-label="Interactive Harkirat Formula concept car model"
+            aria-label="Interactive Vmax Formula concept car model"
           >
             <span>Formula concept model</span>
-            <strong>Harkirat</strong>
+            <strong>Vmax</strong>
             <small>V/JQ-01 · Scroll controlled · WebGL</small>
           </div>
           <div className="scroll-cue" aria-hidden="true">
