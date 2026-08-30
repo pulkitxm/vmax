@@ -218,6 +218,63 @@ function halo(material: THREE.Material) {
   return result;
 }
 
+function alloySpoke(
+  face: number,
+  angle: number,
+  innerRadius: number,
+  outerRadius: number,
+  material: THREE.Material,
+) {
+  const middle = (innerRadius + outerRadius) * 0.5;
+  return mesh(
+    new THREE.BoxGeometry(0.026, 0.034, outerRadius - innerRadius),
+    material,
+    [face, Math.cos(angle) * middle, Math.sin(angle) * middle],
+    [angle - Math.PI / 2, 0, 0],
+  );
+}
+
+function nameDecal(side: number) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 256;
+  const context = canvas.getContext("2d");
+  if (!context) return new THREE.Group();
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.font = "italic 900 138px Arial, sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.lineJoin = "round";
+  context.lineWidth = 14;
+  context.strokeStyle = "#07080a";
+  context.strokeText("HARKIRAT", 512, 134);
+  context.fillStyle = "#f7f2e8";
+  context.fillText("HARKIRAT", 512, 134);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+
+  const decal = mesh(
+    new THREE.PlaneGeometry(0.9, 0.22),
+    new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      toneMapped: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+    }),
+    [side * 0.838, 0.055, -0.46],
+    [0, side * Math.PI * 0.5, 0],
+  );
+  decal.renderOrder = 2;
+  return decal;
+}
+
 function wheel(
   radius: number,
   width: number,
@@ -225,7 +282,7 @@ function wheel(
   z: number,
   tire: THREE.Material,
   rim: THREE.Material,
-  rimEdge: THREE.Material,
+  alloy: THREE.Material,
   brake: THREE.Material,
   caliper: THREE.Material,
 ) {
@@ -239,10 +296,12 @@ function wheel(
     ),
     mesh(
       new THREE.CylinderGeometry(
-        radius * 0.57,
-        radius * 0.57,
-        width + 0.014,
+        radius * 0.58,
+        radius * 0.58,
+        width + 0.008,
         40,
+        1,
+        true,
       ),
       rim,
       [0, 0, 0],
@@ -252,7 +311,7 @@ function wheel(
       new THREE.CylinderGeometry(
         radius * 0.39,
         radius * 0.39,
-        width + 0.022,
+        width * 0.48,
         32,
       ),
       brake,
@@ -263,38 +322,39 @@ function wheel(
       new THREE.CylinderGeometry(
         radius * 0.12,
         radius * 0.12,
-        width + 0.05,
+        width + 0.058,
         20,
       ),
-      rimEdge,
+      alloy,
       [0, 0, 0],
       [0, 0, Math.PI / 2],
     ),
   );
 
   for (const side of [-1, 1]) {
-    const face = side * (width * 0.5 + 0.012);
+    const face = side * (width * 0.5 + 0.018);
     result.add(
       mesh(
-        new THREE.TorusGeometry(radius * 0.78, 0.012, 6, 48),
-        rimEdge,
+        new THREE.TorusGeometry(radius * 0.54, radius * 0.028, 8, 48),
+        alloy,
         [face, 0, 0],
         [0, Math.PI / 2, 0],
       ),
     );
-    for (let spoke = 0; spoke < 10; spoke += 1) {
-      const angle = (spoke / 10) * Math.PI * 2;
+    for (let spoke = 0; spoke < 5; spoke += 1) {
+      const angle = (spoke / 5) * Math.PI * 2;
       result.add(
-        rod(
-          new THREE.Vector3(face, 0, 0),
-          new THREE.Vector3(
-            face,
-            Math.cos(angle) * radius * 0.49,
-            Math.sin(angle) * radius * 0.49,
-          ),
-          0.012,
-          rimEdge,
-          6,
+        alloySpoke(face, angle - 0.055, radius * 0.11, radius * 0.5, alloy),
+        alloySpoke(face, angle + 0.055, radius * 0.11, radius * 0.5, alloy),
+        mesh(
+          new THREE.CylinderGeometry(0.014, 0.014, 0.025, 10),
+          rim,
+          [
+            face + side * 0.018,
+            Math.cos(angle) * radius * 0.075,
+            Math.sin(angle) * radius * 0.075,
+          ],
+          [0, 0, Math.PI / 2],
         ),
       );
     }
@@ -389,17 +449,17 @@ export function createF1CarModel(): F1CarModel {
     roughness: 0.24,
     metalness: 0.9,
   });
+  const alloy = new THREE.MeshPhysicalMaterial({
+    color: 0xb8c0c7,
+    metalness: 0.96,
+    roughness: 0.16,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.12,
+  });
   const brake = new THREE.MeshStandardMaterial({
     color: 0x3b3d40,
     roughness: 0.52,
     metalness: 0.82,
-  });
-  const cyan = new THREE.MeshStandardMaterial({
-    color: 0x39e7f2,
-    emissive: 0x0b7379,
-    emissiveIntensity: 1.4,
-    metalness: 0.22,
-    roughness: 0.28,
   });
   const visor = new THREE.MeshPhysicalMaterial({
     color: 0x101b22,
@@ -552,6 +612,7 @@ export function createF1CarModel(): F1CarModel {
         [0, 0, side * 0.025],
       ),
       mirror(side, redPaint, glass, carbonEdge),
+      nameDecal(side),
     );
 
     for (let vane = 0; vane < 3; vane += 1) {
@@ -729,7 +790,7 @@ export function createF1CarModel(): F1CarModel {
       spec.z,
       tire,
       rim,
-      cyan,
+      alloy,
       brake,
       redPaint,
     );
