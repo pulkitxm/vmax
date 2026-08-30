@@ -3,7 +3,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vmax.pulkit.page"),
-  title: "Vmax | Energy-Aware Race Strategy",
+  title: {
+    default: "Vmax | Every Joule Changes the Race",
+    template: "%s | Vmax",
+  },
   description:
     "Vmax develops the JouleIQ approach to price the future value of energy and make explainable race-strategy decisions.",
   openGraph: {
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body>{children}</body>
     </html>
   );
