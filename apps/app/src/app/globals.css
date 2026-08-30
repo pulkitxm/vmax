@@ -66,7 +66,7 @@ a {
 }
 
 .site-header {
-  position: absolute;
+  position: fixed;
   z-index: 20;
   top: 0;
   left: 50%;
@@ -76,6 +76,8 @@ a {
   width: min(100% - 64px, 1500px);
   height: 82px;
   border-bottom: 1px solid var(--line);
+  background: rgba(7, 8, 10, 0.82);
+  backdrop-filter: blur(18px);
   transform: translateX(-50%);
 }
 
