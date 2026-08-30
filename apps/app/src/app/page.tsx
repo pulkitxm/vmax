@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { DecisionStory } from "@/components/decision-story";
-import { HeroShader } from "@/components/hero-shader";
+import { RaceCarScene } from "@/components/race-car-scene";
 import { ScrollMotion } from "@/components/scroll-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -31,54 +31,46 @@ export default function Home() {
       <SiteHeader />
 
       <section className="hero" aria-labelledby="hero-title">
-        <HeroShader />
-        <div className="hero-grid" aria-hidden="true" />
-        <div className="hero-kicker">
-          <span>Race intelligence</span>
-          <span>2026 energy era</span>
-        </div>
-        <div className="hero-copy">
-          <p className="eyebrow">Introducing JouleIQ</p>
-          <h1 id="hero-title">
-            Every joule
-            <span>changes the race.</span>
-          </h1>
-          <p className="hero-lede">
-            Vmax prices the future value of energy, compares uncertain race
-            futures, and gives the engineer one explainable call.
-          </p>
-          <div className="hero-actions">
-            <Link className="button button-primary" href="#system">
-              See the system
-              <span aria-hidden="true">↓</span>
-            </Link>
-            <Link className="text-link" href="/how-it-works">
-              How it works
-              <span aria-hidden="true">↗</span>
-            </Link>
+        <div className="hero-sticky">
+          <RaceCarScene />
+          <div className="hero-grid" aria-hidden="true" />
+          <div className="hero-kicker">
+            <span>Race intelligence</span>
+            <span>Scroll to inspect</span>
           </div>
-        </div>
-        <div
-          className="hero-telemetry"
-          aria-label="Example JouleIQ recommendation"
-        >
-          <div className="telemetry-topline">
-            <span>Live decision</span>
-            <span className="status-dot">Nominal</span>
+          <div className="hero-copy">
+            <p className="eyebrow">Introducing JouleIQ</p>
+            <h1 id="hero-title">
+              Every joule
+              <span>changes the race.</span>
+            </h1>
+            <p className="hero-lede">
+              Vmax prices the future value of energy and gives the engineer one
+              explainable call.
+            </p>
+            <div className="hero-actions">
+              <Link className="button button-primary" href="#system">
+                See the system
+                <span aria-hidden="true">↓</span>
+              </Link>
+              <Link className="text-link" href="/how-it-works">
+                How it works
+                <span aria-hidden="true">↗</span>
+              </Link>
+            </div>
           </div>
-          <strong>ELIGIBILITY PUSH</strong>
-          <div className="telemetry-values">
-            <span>
-              Energy cost <b>0.14 MJ</b>
-            </span>
-            <span>
-              Confidence <b>87%</b>
-            </span>
+          <div
+            className="hero-model-label"
+            aria-label="Interactive race car model"
+          >
+            <span>3D system model</span>
+            <strong>V/JQ-01</strong>
+            <small>Scroll controlled · WebGL</small>
           </div>
-        </div>
-        <div className="scroll-cue" aria-hidden="true">
-          <span>Scroll to simulate</span>
-          <i />
+          <div className="scroll-cue" aria-hidden="true">
+            <span>Scroll to rotate</span>
+            <i />
+          </div>
         </div>
       </section>
 

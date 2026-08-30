@@ -135,48 +135,82 @@ a {
 
 .hero {
   position: relative;
+  min-height: 165svh;
+}
+
+.hero-sticky {
+  position: sticky;
+  top: 0;
   display: grid;
   align-items: center;
-  min-height: 100svh;
-  padding: 140px max(32px, calc((100vw - 1436px) / 2)) 62px;
+  height: 100svh;
+  padding: 130px max(32px, calc((100vw - 1436px) / 2)) 64px;
+  overflow: hidden;
   isolation: isolate;
 }
 
-.hero::after {
+.race-car-scene {
   position: absolute;
-  z-index: -1;
-  right: -12vw;
-  bottom: -20vw;
-  width: 64vw;
-  aspect-ratio: 1;
-  content: "";
-  border: 1px solid rgba(247, 242, 232, 0.1);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 7vw rgba(247, 242, 232, 0.014),
-    0 0 0 14vw rgba(247, 242, 232, 0.009);
-  transform: rotate(-14deg) scaleY(0.46);
+  z-index: 0;
+  inset: 0 -4% 0 30%;
+  pointer-events: none;
 }
 
-.hero-shader {
+.race-car-scene::after {
   position: absolute;
-  z-index: -2;
-  inset: 0;
+  z-index: -1;
+  inset: 20% 10% 12%;
+  content: "";
+  background: radial-gradient(
+    circle,
+    rgba(57, 231, 242, 0.1),
+    rgba(255, 48, 69, 0.03) 42%,
+    transparent 70%
+  );
+  filter: blur(30px);
+}
+
+.race-car-scene canvas {
   width: 100%;
   height: 100%;
-  opacity: 0.78;
-  mask-image: linear-gradient(to right, transparent 2%, black 35%, black 100%);
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.race-car-scene[data-status="ready"] canvas {
+  opacity: 1;
+}
+
+.race-car-loader {
+  position: absolute;
+  right: 8%;
+  bottom: 7%;
+  color: rgba(247, 242, 232, 0.42);
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.race-car-loader span::before {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 8px;
+  content: "";
+  border-radius: 50%;
+  background: var(--cyan);
 }
 
 .hero-grid {
   position: absolute;
-  z-index: -3;
+  z-index: -1;
   inset: 0;
-  opacity: 0.22;
+  opacity: 0.12;
   background-image:
     linear-gradient(rgba(247, 242, 232, 0.11) 1px, transparent 1px),
     linear-gradient(90deg, rgba(247, 242, 232, 0.11) 1px, transparent 1px);
-  background-size: 92px 92px;
+  background-size: 110px 110px;
   mask-image: linear-gradient(to bottom, black, transparent 78%);
 }
 
@@ -205,7 +239,9 @@ a {
 }
 
 .hero-copy {
-  width: min(810px, 66vw);
+  position: relative;
+  z-index: 2;
+  width: min(680px, 52vw);
   animation: hero-in 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -230,9 +266,9 @@ a {
 }
 
 .hero h1 {
-  max-width: 850px;
+  max-width: 760px;
   margin: 0;
-  font-size: clamp(72px, 9.6vw, 164px);
+  font-size: clamp(68px, 8.2vw, 138px);
   font-style: italic;
   font-weight: 900;
   letter-spacing: -0.075em;
@@ -242,14 +278,13 @@ a {
 
 .hero h1 span {
   display: block;
-  margin-left: 0.2em;
   color: transparent;
   -webkit-text-stroke: 1px rgba(247, 242, 232, 0.68);
 }
 
 .hero-lede {
-  max-width: 590px;
-  margin: 38px 0 0 14%;
+  max-width: 490px;
+  margin: 34px 0 0;
   color: rgba(247, 242, 232, 0.68);
   font-size: clamp(17px, 1.45vw, 22px);
   line-height: 1.48;
@@ -259,7 +294,7 @@ a {
   display: flex;
   align-items: center;
   gap: 34px;
-  margin: 34px 0 0 14%;
+  margin: 34px 0 0;
 }
 
 .button {
@@ -304,37 +339,33 @@ a {
   color: var(--red);
 }
 
-.hero-telemetry {
+.hero-model-label {
   position: absolute;
+  z-index: 2;
   right: max(32px, calc((100vw - 1436px) / 2));
-  bottom: 128px;
-  width: 276px;
-  padding: 17px 18px 18px;
-  border: 1px solid rgba(247, 242, 232, 0.18);
-  background: rgba(7, 8, 10, 0.68);
-  backdrop-filter: blur(18px);
-  animation: telemetry-in 950ms 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.hero-telemetry::before {
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 64px;
-  height: 3px;
-  content: "";
-  background: var(--red);
-}
-
-.telemetry-topline,
-.telemetry-values {
-  display: flex;
-  justify-content: space-between;
+  bottom: 78px;
+  display: grid;
+  gap: 7px;
+  min-width: 180px;
+  padding-top: 13px;
+  border-top: 1px solid rgba(247, 242, 232, 0.34);
   color: var(--muted);
   font-family: var(--mono);
   font-size: 8px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.hero-model-label strong {
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: 24px;
+  font-style: italic;
+}
+
+.hero-model-label small {
+  font-size: 7px;
+  letter-spacing: 0.08em;
 }
 
 .status-dot::before {
@@ -345,32 +376,6 @@ a {
   content: "";
   border-radius: 50%;
   background: var(--green);
-}
-
-.hero-telemetry > strong {
-  display: block;
-  margin: 18px 0 16px;
-  color: var(--paper);
-  font-size: 21px;
-  font-style: italic;
-  letter-spacing: -0.02em;
-}
-
-.telemetry-values {
-  gap: 16px;
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
-  line-height: 1.5;
-}
-
-.telemetry-values span {
-  display: flex;
-  flex-direction: column;
-}
-
-.telemetry-values b {
-  color: var(--cyan);
-  font-size: 11px;
 }
 
 .scroll-cue {
@@ -437,8 +442,8 @@ a {
   display: flex;
   overflow: hidden;
   border-block: 1px solid var(--line);
-  background: var(--red);
-  color: var(--ink);
+  background: var(--ink);
+  color: rgba(247, 242, 232, 0.48);
   white-space: nowrap;
 }
 
@@ -457,6 +462,7 @@ a {
 .signal-strip span::before {
   margin-right: 20px;
   content: "◆";
+  color: var(--red);
   font-size: 6px;
 }
 
@@ -1754,17 +1760,6 @@ a {
   }
 }
 
-@keyframes telemetry-in {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 @keyframes scroll-pulse {
   from {
     transform: translateY(-100%);
@@ -1841,12 +1836,12 @@ a {
     text-transform: uppercase;
   }
 
-  .hero {
+  .hero-sticky {
     padding-inline: 20px;
   }
 
   .hero-copy {
-    width: 100%;
+    width: min(620px, 74vw);
   }
 
   .hero h1 {
@@ -1862,11 +1857,15 @@ a {
     margin-left: 0;
   }
 
-  .hero-telemetry {
-    display: none;
+  .race-car-scene {
+    inset: 0 -20% 0 25%;
   }
 
   .hero-kicker {
+    right: 20px;
+  }
+
+  .hero-model-label {
     right: 20px;
   }
 
@@ -1935,9 +1934,22 @@ a {
   }
 
   .hero {
-    align-items: end;
-    padding-top: 132px;
-    padding-bottom: 90px;
+    min-height: 150svh;
+  }
+
+  .hero-sticky {
+    align-items: start;
+    padding-top: 126px;
+    padding-bottom: 64px;
+  }
+
+  .hero-copy {
+    width: 100%;
+  }
+
+  .race-car-scene {
+    inset: 25% -40% -8% -18%;
+    opacity: 0.76;
   }
 
   .hero-kicker {
@@ -1954,6 +1966,7 @@ a {
   }
 
   .hero-lede {
+    max-width: 330px;
     margin-top: 28px;
     font-size: 16px;
   }
@@ -1967,6 +1980,10 @@ a {
   }
 
   .scroll-cue {
+    display: none;
+  }
+
+  .hero-model-label {
     display: none;
   }
 
