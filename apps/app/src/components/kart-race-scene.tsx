@@ -3,7 +3,73 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
-import { createF1CarModel } from "@/components/f1-car-model";
+import {
+  createKartModel,
+  type KartPalette,
+} from "@/components/kart-model";
+
+type KartLayout = {
+  palette: KartPalette;
+  position: [number, number, number];
+  rotation: number;
+  scale: number;
+  phase: number;
+};
+
+const kartLayouts: KartLayout[] = [
+  {
+    palette: {
+      paint: 0xf1354a,
+      accent: 0x35e7f2,
+      suit: 0xf7f2e8,
+      helmet: 0xf1354a,
+      visor: 0x14242b,
+    },
+    position: [1.34, -0.06, 0.82],
+    rotation: -0.44,
+    scale: 0.7,
+    phase: 0.2,
+  },
+  {
+    palette: {
+      paint: 0x35dce8,
+      accent: 0xf7f2e8,
+      suit: 0x203845,
+      helmet: 0xf7f2e8,
+      visor: 0x0e2e37,
+    },
+    position: [-0.48, 0.05, -0.88],
+    rotation: -0.18,
+    scale: 0.56,
+    phase: 1.8,
+  },
+  {
+    palette: {
+      paint: 0xf4b942,
+      accent: 0xff4b5f,
+      suit: 0x2c2530,
+      helmet: 0xf4b942,
+      visor: 0x241a26,
+    },
+    position: [2.86, 0.08, -1.05],
+    rotation: -0.66,
+    scale: 0.56,
+    phase: 3.4,
+  },
+  {
+    palette: {
+      paint: 0x8c69ff,
+      accent: 0x35e7f2,
+      suit: 0x29203f,
+      helmet: 0xa991ff,
+      visor: 0x171225,
+    },
+    position: [1.38, 0.15, -2.5],
+    rotation: -0.39,
+    scale: 0.49,
+    phase: 5,
+  },
+];
 
 const groundVertexShader = `
   varying vec2 vUv;
@@ -78,7 +144,7 @@ function disposeObject(root: THREE.Object3D) {
   materials.forEach((material) => material.dispose());
 }
 
-export function RaceCarScene() {
+export function KartRaceScene() {
   const hostRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "failed">(
@@ -102,8 +168,28 @@ export function RaceCarScene() {
       antialias: window.innerWidth > 720,
       powerPreference: "high-performance",
     });
-    const carRig = new THREE.Group();
-    const wheelMeshes: THREE.Group[] = [];
+    const formation = new THREE.Group();
+    const kartStates = kartLayouts.map((layout) => {
+      const rig = new THREE.Group();
+      const model = createKartModel(layout.palette);
+      const shadow = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.5, 3.2),
+        new THREE.ShaderMaterial({
+          vertexShader: shadowVertexShader,
+          fragmentShader: shadowFragmentShader,
+          transparent: true,
+          depthWrite: false,
+        }),
+      );
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = -0.37;
+      rig.add(shadow, model.root);
+      rig.position.set(...layout.position);
+      rig.rotation.y = layout.rotation;
+      rig.scale.setScalar(layout.scale);
+      formation.add(rig);
+      return { ...layout, rig, ...model };
+    });
     const pointerTarget = new THREE.Vector2();
     const pointer = new THREE.Vector2();
     const lookTarget = new THREE.Vector3();
@@ -114,7 +200,7 @@ export function RaceCarScene() {
     let progress = 0;
     let elapsed = 0;
     let compact = window.innerWidth < 560;
-    let modelScale = 0.72;
+    let formationScale = 1;
     let viewportWidth = window.innerWidth;
     let previousTime = performance.now();
 
@@ -123,7 +209,7 @@ export function RaceCarScene() {
     renderer.toneMappingExposure = 1.1;
     renderer.setClearColor(0x000000, 0);
 
-    scene.add(carRig);
+    scene.add(formation);
     scene.add(new THREE.HemisphereLight(0xddeeff, 0x08090c, 2.6));
 
     const keyLight = new THREE.DirectionalLight(0xf7f2e8, 5.2);
@@ -158,22 +244,6 @@ export function RaceCarScene() {
     ground.position.y = -0.63;
     scene.add(ground);
 
-    const shadow = new THREE.Mesh(
-      new THREE.PlaneGeometry(4.6, 3.6),
-      new THREE.ShaderMaterial({
-        vertexShader: shadowVertexShader,
-        fragmentShader: shadowFragmentShader,
-        transparent: true,
-        depthWrite: false,
-      }),
-    );
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = -0.6;
-    carRig.add(shadow);
-
-    const { root: model, wheels } = createF1CarModel();
-    wheelMeshes.push(...wheels);
-    carRig.add(model);
     setStatus("ready");
 
     const resize = () => {
@@ -189,13 +259,13 @@ export function RaceCarScene() {
       camera.updateProjectionMatrix();
       viewportWidth = window.innerWidth;
       compact = viewportWidth < 560;
-      modelScale = compact
-        ? 0.5
+      formationScale = compact
+        ? 0.52
         : viewportWidth < 900
-          ? 0.56
+          ? 0.78
           : viewportWidth < 1200
-            ? 0.64
-            : 0.72;
+            ? 0.9
+            : 1;
     };
 
     const updateProgress = () => {
@@ -222,50 +292,62 @@ export function RaceCarScene() {
       pointer.lerp(pointerTarget, ease * 0.72);
 
       const startX = compact
-        ? 0.26
+        ? 0.16
         : viewportWidth < 900
-          ? 0.7
+          ? 0.55
           : viewportWidth < 1200
-            ? 0.8
-            : 1.78;
+            ? 0.75
+            : 1.02;
       const endX = compact
-        ? -0.34
+        ? -0.18
         : viewportWidth < 900
-          ? -0.35
+          ? 0.2
           : viewportWidth < 1200
-            ? -0.3
-            : 0.78;
+            ? 0.35
+            : 0.64;
       const footprintScale = THREE.MathUtils.lerp(
         1,
-        compact ? 0.92 : 0.84,
+        compact ? 0.94 : 0.88,
         Math.sin(progress * Math.PI),
       );
-      model.scale.setScalar(modelScale * footprintScale);
+      formation.scale.setScalar(formationScale * footprintScale);
 
-      carRig.position.set(
+      formation.position.set(
         THREE.MathUtils.lerp(startX, endX, progress) + pointer.x * 0.16,
-        -0.02 + Math.sin(elapsed * 1.2) * 0.018,
-        THREE.MathUtils.lerp(0.1, 0.5, progress),
+        -0.05 + pointer.y * 0.05,
+        THREE.MathUtils.lerp(0.08, 0.38, progress),
       );
-      carRig.rotation.set(
-        THREE.MathUtils.lerp(0.03, 0.18, progress) + pointer.y * 0.035,
-        THREE.MathUtils.lerp(-0.62, 0.88, progress) + pointer.x * 0.09,
-        -Math.sin(progress * Math.PI) * 0.07,
+      formation.rotation.set(
+        THREE.MathUtils.lerp(0.02, 0.12, progress) + pointer.y * 0.025,
+        THREE.MathUtils.lerp(-0.08, 0.16, progress) + pointer.x * 0.07,
+        -Math.sin(progress * Math.PI) * 0.035,
       );
 
-      wheelMeshes.forEach((wheel) => {
-        wheel.rotation.x = -progress * 19 - elapsed * 0.22;
+      kartStates.forEach((kart, index) => {
+        const float = Math.sin(elapsed * 1.35 + kart.phase) * 0.035;
+        kart.rig.position.y = kart.position[1] + float;
+        kart.rig.rotation.y =
+          kart.rotation + Math.sin(elapsed * 0.5 + kart.phase) * 0.025;
+        kart.rig.rotation.z =
+          Math.sin(elapsed * 0.9 + kart.phase) * 0.012 - progress * 0.018;
+        kart.wheels.forEach((wheel) => {
+          wheel.rotation.x = -progress * 23 - elapsed * (0.36 + index * 0.05);
+        });
+        kart.steering.rotation.y =
+          Math.sin(elapsed * 0.72 + kart.phase) * 0.11;
+        kart.driver.rotation.y =
+          Math.sin(elapsed * 0.34 + kart.phase) * 0.025;
       });
 
       camera.position.set(
-        THREE.MathUtils.lerp(3.9, -3.15, progress),
-        THREE.MathUtils.lerp(2.45, 1.55, progress),
-        THREE.MathUtils.lerp(5.35, 4.45, progress),
+        THREE.MathUtils.lerp(5.4, 4.45, progress),
+        THREE.MathUtils.lerp(3.25, 2.5, progress),
+        THREE.MathUtils.lerp(7.4, 6.3, progress),
       );
       lookTarget.set(
-        THREE.MathUtils.lerp(0.2, -0.1, progress),
-        THREE.MathUtils.lerp(0.05, 0.12, progress),
-        0,
+        THREE.MathUtils.lerp(1.18, 0.95, progress),
+        THREE.MathUtils.lerp(0.38, 0.5, progress),
+        THREE.MathUtils.lerp(-0.35, -0.58, progress),
       );
       camera.lookAt(lookTarget);
 
@@ -335,10 +417,10 @@ export function RaceCarScene() {
   }, []);
 
   return (
-    <div className="race-car-scene" ref={hostRef} data-status={status}>
+    <div className="kart-race-scene" ref={hostRef} data-status={status}>
       <canvas ref={canvasRef} aria-hidden="true" />
-      <div className="race-car-loader" aria-live="polite">
-        {status === "loading" && <span>Loading race model</span>}
+      <div className="kart-race-loader" aria-live="polite">
+        {status === "loading" && <span>Loading kart grid</span>}
         {status === "failed" && <span>3D preview unavailable</span>}
       </div>
     </div>

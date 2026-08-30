@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { DecisionStory } from "@/components/decision-story";
-import { RaceCarScene } from "@/components/race-car-scene";
+import { KartRaceScene } from "@/components/kart-race-scene";
 import { ScrollMotion } from "@/components/scroll-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -32,7 +32,7 @@ export default function Home() {
 
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero-sticky">
-          <RaceCarScene />
+          <KartRaceScene />
           <div className="hero-grid" aria-hidden="true" />
           <div className="hero-kicker">
             <span>Race intelligence</span>
@@ -61,10 +61,10 @@ export default function Home() {
           </div>
           <div
             className="hero-model-label"
-            aria-label="Interactive Formula 1 concept car model"
+            aria-label="Animated formation of four low-poly race karts"
           >
-            <span>F1 concept model</span>
-            <strong>V/JQ-01</strong>
+            <span>Four kart formation</span>
+            <strong>JQ GRID 04</strong>
             <small>Scroll controlled · WebGL</small>
           </div>
           <div className="scroll-cue" aria-hidden="true">

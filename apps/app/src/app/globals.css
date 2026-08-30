@@ -151,14 +151,14 @@ a {
   isolation: isolate;
 }
 
-.race-car-scene {
+.kart-race-scene {
   position: absolute;
   z-index: 0;
   inset: 0 -4% 0 0;
   pointer-events: none;
 }
 
-.race-car-scene::after {
+.kart-race-scene::after {
   position: absolute;
   z-index: -1;
   inset: 20% 10% 12%;
@@ -172,18 +172,18 @@ a {
   filter: blur(30px);
 }
 
-.race-car-scene canvas {
+.kart-race-scene canvas {
   width: 100%;
   height: 100%;
   opacity: 0;
   transition: opacity 700ms ease;
 }
 
-.race-car-scene[data-status="ready"] canvas {
+.kart-race-scene[data-status="ready"] canvas {
   opacity: 1;
 }
 
-.race-car-loader {
+.kart-race-loader {
   position: absolute;
   right: 8%;
   bottom: 7%;
@@ -194,7 +194,7 @@ a {
   text-transform: uppercase;
 }
 
-.race-car-loader span::before {
+.kart-race-loader span::before {
   display: inline-block;
   width: 5px;
   height: 5px;
@@ -1859,7 +1859,7 @@ a {
     margin-left: 0;
   }
 
-  .race-car-scene {
+  .kart-race-scene {
     inset: 18% -20% -6% -8%;
   }
 
@@ -1949,7 +1949,7 @@ a {
     width: 100%;
   }
 
-  .race-car-scene {
+  .kart-race-scene {
     inset: 25% -40% -8% -18%;
     opacity: 0.9;
   }
