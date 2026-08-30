@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 import { createF1CarModel } from "@/components/f1-car-model";
 
@@ -114,27 +115,57 @@ export function RaceCarScene() {
     let progress = 0;
     let elapsed = 0;
     let compact = window.innerWidth < 560;
-    let modelScale = 0.72;
+    let modelScale = 0.6;
     let viewportWidth = window.innerWidth;
     let previousTime = performance.now();
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 0.92;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setClearColor(0x000000, 0);
 
-    scene.add(carRig);
-    scene.add(new THREE.HemisphereLight(0xddeeff, 0x08090c, 2.6));
+    const roomEnvironment = new RoomEnvironment();
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const environment = pmremGenerator.fromScene(
+      roomEnvironment,
+      0.035,
+    ).texture;
+    scene.environment = environment;
+    roomEnvironment.dispose();
+    pmremGenerator.dispose();
 
-    const keyLight = new THREE.DirectionalLight(0xf7f2e8, 5.2);
-    keyLight.position.set(3.5, 5.5, 4.5);
+    scene.add(carRig);
+    scene.add(new THREE.HemisphereLight(0xe8f4ff, 0x07080a, 1.15));
+
+    const keyLight = new THREE.DirectionalLight(0xfff8ed, 2.8);
+    keyLight.position.set(4.5, 6.5, 5.4);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.camera.near = 0.5;
+    keyLight.shadow.camera.far = 18;
+    keyLight.shadow.camera.left = -4;
+    keyLight.shadow.camera.right = 4;
+    keyLight.shadow.camera.top = 4;
+    keyLight.shadow.camera.bottom = -4;
+    keyLight.shadow.bias = -0.0002;
+    keyLight.shadow.normalBias = 0.025;
     scene.add(keyLight);
 
-    const cyanLight = new THREE.PointLight(0x39e7f2, 18, 8, 2);
+    const fillLight = new THREE.DirectionalLight(0x8fd8ff, 1.05);
+    fillLight.position.set(-4, 2.6, 3.2);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xff5a68, 1.55);
+    rimLight.position.set(2.2, 3.4, -4.2);
+    scene.add(rimLight);
+
+    const cyanLight = new THREE.PointLight(0x39e7f2, 10, 8, 2);
     cyanLight.position.set(-2.8, 0.7, 1.4);
     scene.add(cyanLight);
 
-    const redLight = new THREE.PointLight(0xff3045, 22, 8, 2);
+    const redLight = new THREE.PointLight(0xff3045, 12, 8, 2);
     redLight.position.set(2.5, 0.5, -1.6);
     scene.add(redLight);
 
@@ -168,8 +199,21 @@ export function RaceCarScene() {
       }),
     );
     shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = -0.6;
+    shadow.position.y = -0.585;
     carRig.add(shadow);
+
+    const shadowCatcher = new THREE.Mesh(
+      new THREE.PlaneGeometry(7, 7),
+      new THREE.ShadowMaterial({
+        color: 0x000000,
+        opacity: 0.34,
+        transparent: true,
+      }),
+    );
+    shadowCatcher.rotation.x = -Math.PI / 2;
+    shadowCatcher.position.y = -0.61;
+    shadowCatcher.receiveShadow = true;
+    carRig.add(shadowCatcher);
 
     const { root: model, wheels } = createF1CarModel();
     wheelMeshes.push(...wheels);
@@ -192,10 +236,10 @@ export function RaceCarScene() {
       modelScale = compact
         ? 0.5
         : viewportWidth < 900
-          ? 0.56
+          ? 0.52
           : viewportWidth < 1200
-            ? 0.64
-            : 0.72;
+            ? 0.56
+            : 0.6;
     };
 
     const updateProgress = () => {
@@ -227,7 +271,7 @@ export function RaceCarScene() {
           ? 0.7
           : viewportWidth < 1200
             ? 0.8
-            : 1.78;
+            : 1.62;
       const endX = compact
         ? -0.34
         : viewportWidth < 900
@@ -244,12 +288,12 @@ export function RaceCarScene() {
 
       carRig.position.set(
         THREE.MathUtils.lerp(startX, endX, progress) + pointer.x * 0.16,
-        -0.02 + Math.sin(elapsed * 1.2) * 0.018,
+        0.06 + Math.sin(elapsed * 1.2) * 0.018,
         THREE.MathUtils.lerp(0.1, 0.5, progress),
       );
       carRig.rotation.set(
         THREE.MathUtils.lerp(0.03, 0.18, progress) + pointer.y * 0.035,
-        THREE.MathUtils.lerp(-0.62, 0.88, progress) + pointer.x * 0.09,
+        THREE.MathUtils.lerp(0, 0.96, progress) + pointer.x * 0.09,
         -Math.sin(progress * Math.PI) * 0.07,
       );
 
@@ -271,8 +315,8 @@ export function RaceCarScene() {
 
       groundMaterial.uniforms.uTime.value = elapsed;
       groundMaterial.uniforms.uProgress.value = progress;
-      cyanLight.intensity = THREE.MathUtils.lerp(12, 24, progress);
-      redLight.intensity = THREE.MathUtils.lerp(24, 14, progress);
+      cyanLight.intensity = THREE.MathUtils.lerp(7, 13, progress);
+      redLight.intensity = THREE.MathUtils.lerp(13, 8, progress);
       renderer.render(scene, camera);
 
       if (!reduceMotion && visible && !disposed) {
@@ -329,6 +373,7 @@ export function RaceCarScene() {
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("pointermove", updatePointer);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      environment.dispose();
       disposeObject(scene);
       renderer.dispose();
     };

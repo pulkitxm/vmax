@@ -5,6 +5,65 @@ type F1CarModel = {
   wheels: THREE.Group[];
 };
 
+type LoftSection = {
+  z: number;
+  width: number;
+  height: number;
+  y: number;
+};
+
+function loftGeometry(sections: LoftSection[], radialSegments = 18) {
+  const vertices: number[] = [];
+  const indices: number[] = [];
+
+  sections.forEach((section) => {
+    for (let segment = 0; segment < radialSegments; segment += 1) {
+      const angle = (segment / radialSegments) * Math.PI * 2;
+      vertices.push(
+        Math.cos(angle) * section.width * 0.5,
+        section.y + Math.sin(angle) * section.height * 0.5,
+        section.z,
+      );
+    }
+  });
+
+  for (let section = 0; section < sections.length - 1; section += 1) {
+    for (let segment = 0; segment < radialSegments; segment += 1) {
+      const next = (segment + 1) % radialSegments;
+      const currentRing = section * radialSegments;
+      const nextRing = (section + 1) * radialSegments;
+      const a = currentRing + segment;
+      const b = currentRing + next;
+      const c = nextRing + segment;
+      const d = nextRing + next;
+      indices.push(a, b, c, b, d, c);
+    }
+  }
+
+  const rearCenter = vertices.length / 3;
+  const rear = sections[0];
+  vertices.push(0, rear.y, rear.z);
+  const frontCenter = vertices.length / 3;
+  const front = sections[sections.length - 1];
+  vertices.push(0, front.y, front.z);
+
+  for (let segment = 0; segment < radialSegments; segment += 1) {
+    const next = (segment + 1) % radialSegments;
+    indices.push(rearCenter, segment, next);
+    const ring = (sections.length - 1) * radialSegments;
+    indices.push(frontCenter, ring + next, ring + segment);
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(vertices, 3),
+  );
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
 function taperedBox(
   frontWidth: number,
   rearWidth: number,
@@ -41,12 +100,48 @@ function taperedBox(
     frontZ,
   ]);
   const indices = [
-    0, 1, 2, 0, 2, 3, 4, 6, 5, 4, 7, 6, 0, 4, 5, 0, 5, 1, 3, 2, 6, 3,
-    6, 7, 1, 5, 6, 1, 6, 2, 0, 3, 7, 0, 7, 4,
+    0, 1, 2, 0, 2, 3, 4, 6, 5, 4, 7, 6, 0, 4, 5, 0, 5, 1, 3, 2, 6, 3, 6, 7, 1,
+    5, 6, 1, 6, 2, 0, 3, 7, 0, 7, 4,
   ];
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
   geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function horizontalPlate(points: Array<[number, number]>, thickness: number) {
+  const shape = new THREE.Shape();
+  points.forEach(([x, z], index) => {
+    if (index === 0) shape.moveTo(x, -z);
+    else shape.lineTo(x, -z);
+  });
+  shape.closePath();
+  const geometry = new THREE.ExtrudeGeometry(shape, {
+    depth: thickness,
+    bevelEnabled: false,
+    curveSegments: 1,
+  });
+  geometry.rotateX(-Math.PI / 2);
+  geometry.translate(0, -thickness * 0.5, 0);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function verticalPlate(points: Array<[number, number]>, thickness: number) {
+  const shape = new THREE.Shape();
+  points.forEach(([z, y], index) => {
+    if (index === 0) shape.moveTo(-z, y);
+    else shape.lineTo(-z, y);
+  });
+  shape.closePath();
+  const geometry = new THREE.ExtrudeGeometry(shape, {
+    depth: thickness,
+    bevelEnabled: false,
+    curveSegments: 1,
+  });
+  geometry.rotateY(Math.PI / 2);
+  geometry.translate(-thickness * 0.5, 0, 0);
   geometry.computeVertexNormals();
   return geometry;
 }
@@ -63,16 +158,29 @@ function mesh(
   return result;
 }
 
+function scaledMesh(
+  geometry: THREE.BufferGeometry,
+  material: THREE.Material,
+  position: [number, number, number],
+  scale: [number, number, number],
+  rotation: [number, number, number] = [0, 0, 0],
+) {
+  const result = mesh(geometry, material, position, rotation);
+  result.scale.set(...scale);
+  return result;
+}
+
 function rod(
   start: THREE.Vector3,
   end: THREE.Vector3,
   radius: number,
   material: THREE.Material,
+  segments = 10,
 ) {
   const midpoint = start.clone().add(end).multiplyScalar(0.5);
   const direction = end.clone().sub(start);
   const result = mesh(
-    new THREE.CylinderGeometry(radius, radius, direction.length(), 8),
+    new THREE.CylinderGeometry(radius, radius, direction.length(), segments),
     material,
     [midpoint.x, midpoint.y, midpoint.z],
   );
@@ -85,27 +193,86 @@ function rod(
 
 function halo(material: THREE.Material) {
   const result = new THREE.Group();
-  const ringPath = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-0.34, 0.48, -0.13),
-    new THREE.Vector3(-0.4, 0.55, 0.06),
-    new THREE.Vector3(-0.29, 0.58, 0.31),
-    new THREE.Vector3(0, 0.59, 0.42),
-    new THREE.Vector3(0.29, 0.58, 0.31),
-    new THREE.Vector3(0.4, 0.55, 0.06),
-    new THREE.Vector3(0.34, 0.48, -0.13),
-  ]);
-  result.add(
-    new THREE.Mesh(new THREE.TubeGeometry(ringPath, 40, 0.032, 8), material),
+  const ringPath = new THREE.CatmullRomCurve3(
+    [
+      new THREE.Vector3(-0.35, 0.51, -0.23),
+      new THREE.Vector3(-0.43, 0.61, 0.01),
+      new THREE.Vector3(-0.33, 0.67, 0.32),
+      new THREE.Vector3(0, 0.69, 0.51),
+      new THREE.Vector3(0.33, 0.67, 0.32),
+      new THREE.Vector3(0.43, 0.61, 0.01),
+      new THREE.Vector3(0.35, 0.51, -0.23),
+    ],
+    false,
+    "centripetal",
   );
   result.add(
+    new THREE.Mesh(new THREE.TubeGeometry(ringPath, 56, 0.026, 10), material),
     rod(
-      new THREE.Vector3(0, 0.58, 0.41),
-      new THREE.Vector3(0, 0.22, 0.68),
-      0.032,
+      new THREE.Vector3(0, 0.69, 0.5),
+      new THREE.Vector3(0, 0.25, 0.77),
+      0.028,
       material,
     ),
   );
   return result;
+}
+
+function alloySpoke(
+  face: number,
+  angle: number,
+  innerRadius: number,
+  outerRadius: number,
+  material: THREE.Material,
+) {
+  const middle = (innerRadius + outerRadius) * 0.5;
+  return mesh(
+    new THREE.BoxGeometry(0.026, 0.034, outerRadius - innerRadius),
+    material,
+    [face, Math.cos(angle) * middle, Math.sin(angle) * middle],
+    [angle - Math.PI / 2, 0, 0],
+  );
+}
+
+function nameDecal(side: number) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 256;
+  const context = canvas.getContext("2d");
+  if (!context) return new THREE.Group();
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.font = "italic 900 138px Arial, sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.lineJoin = "round";
+  context.lineWidth = 14;
+  context.strokeStyle = "#07080a";
+  context.strokeText("VMAX", 512, 134);
+  context.fillStyle = "#f7f2e8";
+  context.fillText("VMAX", 512, 134);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+
+  const decal = mesh(
+    new THREE.PlaneGeometry(0.9, 0.22),
+    new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      toneMapped: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+    }),
+    [side * 0.838, 0.055, -0.46],
+    [0, side * Math.PI * 0.5, 0],
+  );
+  decal.renderOrder = 2;
+  return decal;
 }
 
 function wheel(
@@ -115,170 +282,507 @@ function wheel(
   z: number,
   tire: THREE.Material,
   rim: THREE.Material,
-  stripe: THREE.Material,
+  alloy: THREE.Material,
+  brake: THREE.Material,
+  caliper: THREE.Material,
 ) {
   const result = new THREE.Group();
-  const tireMesh = mesh(
-    new THREE.CylinderGeometry(radius, radius, width, 32, 1),
-    tire,
-    [0, 0, 0],
-    [0, 0, Math.PI / 2],
+  result.add(
+    mesh(
+      new THREE.CylinderGeometry(radius, radius, width, 48, 2),
+      tire,
+      [0, 0, 0],
+      [0, 0, Math.PI / 2],
+    ),
+    mesh(
+      new THREE.CylinderGeometry(
+        radius * 0.58,
+        radius * 0.58,
+        width + 0.008,
+        40,
+        1,
+        true,
+      ),
+      rim,
+      [0, 0, 0],
+      [0, 0, Math.PI / 2],
+    ),
+    mesh(
+      new THREE.CylinderGeometry(
+        radius * 0.39,
+        radius * 0.39,
+        width * 0.48,
+        32,
+      ),
+      brake,
+      [0, 0, 0],
+      [0, 0, Math.PI / 2],
+    ),
+    mesh(
+      new THREE.CylinderGeometry(
+        radius * 0.12,
+        radius * 0.12,
+        width + 0.058,
+        20,
+      ),
+      alloy,
+      [0, 0, 0],
+      [0, 0, Math.PI / 2],
+    ),
   );
-  const rimMesh = mesh(
-    new THREE.CylinderGeometry(radius * 0.52, radius * 0.52, width + 0.012, 20),
-    rim,
-    [0, 0, 0],
-    [0, 0, Math.PI / 2],
-  );
-  result.add(tireMesh, rimMesh);
 
   for (const side of [-1, 1]) {
-    const sidewallStripe = mesh(
-      new THREE.TorusGeometry(radius * 0.76, 0.014, 6, 32),
-      stripe,
-      [(width / 2 + 0.009) * side, 0, 0],
-      [0, Math.PI / 2, 0],
+    const face = side * (width * 0.5 + 0.018);
+    result.add(
+      mesh(
+        new THREE.TorusGeometry(radius * 0.54, radius * 0.028, 8, 48),
+        alloy,
+        [face, 0, 0],
+        [0, Math.PI / 2, 0],
+      ),
     );
-    result.add(sidewallStripe);
+    for (let spoke = 0; spoke < 5; spoke += 1) {
+      const angle = (spoke / 5) * Math.PI * 2;
+      result.add(
+        alloySpoke(face, angle - 0.055, radius * 0.11, radius * 0.5, alloy),
+        alloySpoke(face, angle + 0.055, radius * 0.11, radius * 0.5, alloy),
+        mesh(
+          new THREE.CylinderGeometry(0.014, 0.014, 0.025, 10),
+          rim,
+          [
+            face + side * 0.018,
+            Math.cos(angle) * radius * 0.075,
+            Math.sin(angle) * radius * 0.075,
+          ],
+          [0, 0, Math.PI / 2],
+        ),
+      );
+    }
   }
 
+  result.add(
+    scaledMesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      caliper,
+      [width * 0.52, 0.03, -radius * 0.25],
+      [0.045, radius * 0.26, radius * 0.14],
+    ),
+  );
   result.position.set(x, 0, z);
+  return result;
+}
+
+function mirror(
+  side: number,
+  shell: THREE.Material,
+  glass: THREE.Material,
+  carbon: THREE.Material,
+) {
+  const result = new THREE.Group();
+  const x = side * 0.65;
+  result.add(
+    rod(
+      new THREE.Vector3(side * 0.38, 0.43, 0.2),
+      new THREE.Vector3(x, 0.47, 0.29),
+      0.012,
+      carbon,
+      8,
+    ),
+    scaledMesh(
+      new THREE.SphereGeometry(0.125, 20, 12),
+      shell,
+      [x, 0.48, 0.31],
+      [1.15, 0.42, 0.58],
+    ),
+    scaledMesh(
+      new THREE.CircleGeometry(0.095, 20),
+      glass,
+      [x + side * 0.125, 0.48, 0.31],
+      [1, 0.8, 1],
+      [0, side * Math.PI * 0.5, 0],
+    ),
+  );
   return result;
 }
 
 export function createF1CarModel(): F1CarModel {
   const root = new THREE.Group();
   const wheels: THREE.Group[] = [];
-  const paint = new THREE.MeshPhysicalMaterial({
-    color: 0xe92c3d,
-    metalness: 0.38,
-    roughness: 0.24,
-    clearcoat: 1,
-    clearcoatRoughness: 0.11,
-  });
-  const paintDark = new THREE.MeshPhysicalMaterial({
-    color: 0x7b101d,
-    metalness: 0.48,
-    roughness: 0.28,
-    clearcoat: 1,
-    clearcoatRoughness: 0.16,
-  });
-  const carbon = new THREE.MeshStandardMaterial({
-    color: 0x111419,
-    metalness: 0.52,
-    roughness: 0.42,
-  });
-  const carbonEdge = new THREE.MeshStandardMaterial({
-    color: 0x262c31,
-    metalness: 0.7,
-    roughness: 0.26,
-  });
-  const warmWhite = new THREE.MeshPhysicalMaterial({
-    color: 0xf7f2e8,
-    metalness: 0.28,
-    roughness: 0.25,
-    clearcoat: 0.8,
-    clearcoatRoughness: 0.16,
-  });
-  const cyan = new THREE.MeshStandardMaterial({
-    color: 0x39e7f2,
-    emissive: 0x0d7b82,
-    emissiveIntensity: 0.65,
-    metalness: 0.3,
-    roughness: 0.28,
-  });
-  const tire = new THREE.MeshStandardMaterial({
-    color: 0x070809,
-    roughness: 0.92,
-    metalness: 0.02,
-  });
-  const rim = new THREE.MeshStandardMaterial({
-    color: 0x4c5257,
-    roughness: 0.3,
-    metalness: 0.86,
-  });
-  const helmet = new THREE.MeshPhysicalMaterial({
-    color: 0xf7f2e8,
-    metalness: 0.16,
+  const primaryRed = new THREE.MeshPhysicalMaterial({
+    color: 0xa9001c,
+    metalness: 0.18,
     roughness: 0.2,
     clearcoat: 1,
+    clearcoatRoughness: 0.075,
+  });
+  const warmWhite = new THREE.MeshPhysicalMaterial({
+    color: 0xf4f0e8,
+    metalness: 0.14,
+    roughness: 0.2,
+    clearcoat: 1,
+    clearcoatRoughness: 0.09,
+  });
+  const darkRed = new THREE.MeshPhysicalMaterial({
+    color: 0x770d19,
+    metalness: 0.36,
+    roughness: 0.26,
+    clearcoat: 0.9,
+    clearcoatRoughness: 0.12,
+  });
+  const carbon = new THREE.MeshStandardMaterial({
+    color: 0x090b0e,
+    metalness: 0.62,
+    roughness: 0.32,
+  });
+  const carbonEdge = new THREE.MeshStandardMaterial({
+    color: 0x252b31,
+    metalness: 0.72,
+    roughness: 0.22,
+  });
+  const tire = new THREE.MeshStandardMaterial({
+    color: 0x050607,
+    roughness: 0.96,
+    metalness: 0,
+  });
+  const rim = new THREE.MeshStandardMaterial({
+    color: 0x0c0f12,
+    roughness: 0.24,
+    metalness: 0.9,
+  });
+  const alloy = new THREE.MeshPhysicalMaterial({
+    color: 0xb8c0c7,
+    metalness: 0.96,
+    roughness: 0.16,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.12,
+  });
+  const brake = new THREE.MeshStandardMaterial({
+    color: 0x3b3d40,
+    roughness: 0.52,
+    metalness: 0.82,
   });
   const visor = new THREE.MeshPhysicalMaterial({
-    color: 0x17262d,
-    metalness: 0.75,
-    roughness: 0.12,
+    color: 0x101b22,
+    metalness: 0.7,
+    roughness: 0.09,
+    clearcoat: 1,
+  });
+  const glass = new THREE.MeshPhysicalMaterial({
+    color: 0x21363e,
+    metalness: 0.45,
+    roughness: 0.08,
     clearcoat: 1,
   });
   const redLight = new THREE.MeshBasicMaterial({ color: 0xff3045 });
 
   root.add(
-    mesh(new THREE.BoxGeometry(1.72, 0.07, 2.7), carbon, [0, -0.28, -0.02]),
-    mesh(taperedBox(0.52, 0.84, 0.36, 0.42, 1.72), paint, [0, 0, 0.24]),
-    mesh(taperedBox(0.16, 0.5, 0.15, 0.28, 1.4), paint, [0, -0.06, 1.54]),
-    mesh(taperedBox(0.1, 0.22, 0.08, 0.14, 0.66), warmWhite, [0, -0.07, 2.4]),
-    mesh(taperedBox(0.96, 0.72, 0.4, 0.34, 1.24), paintDark, [0, 0.05, -0.9]),
+    mesh(
+      horizontalPlate(
+        [
+          [-0.9, -1.55],
+          [-0.98, -0.6],
+          [-0.87, 0.55],
+          [-0.53, 1.62],
+          [-0.42, 2.2],
+          [0.42, 2.2],
+          [0.53, 1.62],
+          [0.87, 0.55],
+          [0.98, -0.6],
+          [0.9, -1.55],
+        ],
+        0.075,
+      ),
+      carbon,
+      [0, -0.31, 0],
+    ),
+    mesh(
+      loftGeometry([
+        { z: -1.45, width: 0.66, height: 0.42, y: 0.02 },
+        { z: -0.85, width: 0.94, height: 0.55, y: 0.07 },
+        { z: -0.2, width: 0.76, height: 0.51, y: 0.08 },
+        { z: 0.55, width: 0.62, height: 0.43, y: 0.02 },
+        { z: 1.25, width: 0.46, height: 0.3, y: -0.04 },
+        { z: 1.92, width: 0.25, height: 0.2, y: -0.08 },
+        { z: 2.52, width: 0.12, height: 0.12, y: -0.1 },
+      ]),
+      primaryRed,
+      [0, 0, 0],
+    ),
+    mesh(
+      loftGeometry(
+        [
+          { z: 0.5, width: 0.12, height: 0.035, y: 0.235 },
+          { z: 1.15, width: 0.12, height: 0.035, y: 0.12 },
+          { z: 1.9, width: 0.09, height: 0.028, y: 0.03 },
+          { z: 2.48, width: 0.055, height: 0.022, y: -0.035 },
+        ],
+        10,
+      ),
+      warmWhite,
+      [0, 0, 0],
+    ),
+    mesh(
+      loftGeometry([
+        { z: -1.5, width: 0.28, height: 0.32, y: 0.48 },
+        { z: -1.04, width: 0.51, height: 0.66, y: 0.42 },
+        { z: -0.5, width: 0.58, height: 0.76, y: 0.36 },
+        { z: -0.08, width: 0.44, height: 0.52, y: 0.34 },
+      ]),
+      primaryRed,
+      [0, 0, 0],
+    ),
+    mesh(
+      verticalPlate(
+        [
+          [-1.48, 0.39],
+          [-1.2, 0.94],
+          [-0.58, 0.78],
+          [-0.03, 0.47],
+          [-0.18, 0.33],
+          [-1.36, 0.3],
+        ],
+        0.075,
+      ),
+      warmWhite,
+      [0, 0, 0],
+    ),
+    mesh(
+      loftGeometry([
+        { z: -0.86, width: 0.36, height: 0.42, y: 0.7 },
+        { z: -0.54, width: 0.45, height: 0.5, y: 0.72 },
+        { z: -0.23, width: 0.39, height: 0.45, y: 0.67 },
+      ]),
+      warmWhite,
+      [0, 0, 0],
+    ),
+    scaledMesh(
+      new THREE.CapsuleGeometry(0.22, 0.34, 8, 24),
+      carbon,
+      [0, 0.36, 0.03],
+      [1.22, 1.1, 1],
+      [Math.PI / 2, 0, 0],
+    ),
   );
 
   for (const side of [-1, 1]) {
     root.add(
       mesh(
-        taperedBox(0.5, 0.68, 0.28, 0.36, 1.04),
-        paint,
-        [side * 0.56, -0.01, -0.47],
+        loftGeometry([
+          { z: -1.28, width: 0.35, height: 0.23, y: -0.05 },
+          { z: -0.7, width: 0.56, height: 0.42, y: 0.02 },
+          { z: -0.08, width: 0.66, height: 0.48, y: 0.05 },
+          { z: 0.43, width: 0.48, height: 0.34, y: 0.02 },
+        ]),
+        primaryRed,
+        [side * 0.49, 0, 0],
       ),
       mesh(
-        taperedBox(0.32, 0.48, 0.17, 0.24, 0.35),
+        taperedBox(0.36, 0.5, 0.055, 0.075, 1.32),
+        warmWhite,
+        [side * 0.62, 0.09, -0.42],
+        [0, 0, side * 0.035],
+      ),
+      mesh(
+        loftGeometry(
+          [
+            { z: 0.29, width: 0.22, height: 0.13, y: 0.12 },
+            { z: 0.4, width: 0.28, height: 0.16, y: 0.12 },
+            { z: 0.5, width: 0.22, height: 0.12, y: 0.11 },
+          ],
+          14,
+        ),
         carbon,
-        [side * 0.56, 0.03, 0.13],
+        [side * 0.67, 0, 0],
+      ),
+      mesh(taperedBox(0.07, 0.1, 0.055, 0.075, 2.15), carbonEdge, [
+        side * 0.91,
+        -0.24,
+        -0.28,
+      ]),
+      mesh(
+        new THREE.BoxGeometry(0.035, 0.42, 0.34),
+        carbon,
+        [side * 0.84, -0.03, 0.55],
+        [0, side * 0.09, side * -0.07],
       ),
       mesh(
-        new THREE.BoxGeometry(0.08, 0.07, 1.74),
-        cyan,
-        [side * 0.83, -0.23, -0.16],
+        taperedBox(0.27, 0.43, 0.065, 0.09, 1.16),
+        darkRed,
+        [side * 0.64, -0.02, -0.47],
+        [0, 0, side * 0.025],
       ),
+      mirror(side, warmWhite, glass, carbonEdge),
+      nameDecal(side),
+    );
+
+    for (let vane = 0; vane < 3; vane += 1) {
+      root.add(
+        mesh(
+          new THREE.BoxGeometry(0.028, 0.26 - vane * 0.035, 0.46),
+          carbon,
+          [side * (0.91 + vane * 0.035), -0.04, -0.75 - vane * 0.18],
+          [0, side * 0.06, 0],
+        ),
+      );
+    }
+  }
+
+  root.add(
+    scaledMesh(
+      new THREE.CapsuleGeometry(0.2, 0.28, 7, 20),
+      darkRed,
+      [0, 0.24, -0.01],
+      [0.68, 0.3, 0.52],
+      [Math.PI / 2, 0, 0],
+    ),
+    mesh(new THREE.SphereGeometry(0.205, 28, 18), warmWhite, [0, 0.59, 0.02]),
+    mesh(
+      new THREE.SphereGeometry(0.211, 28, 12, 0, Math.PI * 2, 0, 1.25),
+      visor,
+      [0, 0.6, 0.095],
+      [Math.PI / 2, 0, 0],
+    ),
+    mesh(
+      new THREE.TorusGeometry(0.115, 0.018, 8, 24),
+      carbonEdge,
+      [0, 0.34, 0.32],
+      [-0.42, 0, 0],
+    ),
+    halo(carbonEdge),
+  );
+
+  root.add(
+    mesh(
+      horizontalPlate(
+        [
+          [-1.08, 2.25],
+          [-1.02, 2.63],
+          [-0.48, 2.72],
+          [0.48, 2.72],
+          [1.02, 2.63],
+          [1.08, 2.25],
+        ],
+        0.055,
+      ),
+      carbon,
+      [0, -0.24, 0],
+    ),
+    mesh(
+      taperedBox(1.83, 2.02, 0.045, 0.055, 0.33),
+      primaryRed,
+      [0, -0.16, 2.43],
+      [-0.05, 0, 0],
+    ),
+    mesh(
+      taperedBox(1.66, 1.88, 0.04, 0.05, 0.28),
+      warmWhite,
+      [0, -0.08, 2.34],
+      [-0.12, 0, 0],
+    ),
+    mesh(
+      taperedBox(1.45, 1.7, 0.035, 0.045, 0.24),
+      carbonEdge,
+      [0, -0.01, 2.27],
+      [-0.18, 0, 0],
+    ),
+  );
+
+  for (const side of [-1, 1]) {
+    root.add(
+      mesh(
+        new THREE.BoxGeometry(0.055, 0.27, 0.48),
+        darkRed,
+        [side * 1.03, -0.09, 2.46],
+        [0, 0, side * 0.05],
+      ),
+      mesh(new THREE.BoxGeometry(0.025, 0.17, 0.4), carbon, [
+        side * 0.88,
+        -0.06,
+        2.48,
+      ]),
     );
   }
 
   root.add(
     mesh(
-      new THREE.CapsuleGeometry(0.3, 0.45, 6, 18),
-      carbon,
-      [0, 0.31, -0.03],
-      [Math.PI / 2, 0, 0],
+      taperedBox(1.58, 1.5, 0.12, 0.1, 0.38),
+      warmWhite,
+      [0, 0.77, -1.58],
+      [-0.09, 0, 0],
     ),
-    mesh(new THREE.SphereGeometry(0.2, 24, 16), helmet, [0, 0.52, 0.02]),
     mesh(
-      new THREE.SphereGeometry(0.205, 24, 12, 0, Math.PI * 2, 0, 1.24),
-      visor,
-      [0, 0.53, 0.09],
-      [Math.PI / 2, 0, 0],
+      taperedBox(1.48, 1.4, 0.07, 0.06, 0.34),
+      carbon,
+      [0, 0.61, -1.5],
+      [-0.18, 0, 0],
     ),
-    halo(carbonEdge),
-    mesh(taperedBox(0.08, 0.34, 0.3, 0.46, 0.72), paint, [0, 0.43, -0.68]),
+    mesh(
+      taperedBox(1.27, 1.18, 0.06, 0.05, 0.28),
+      carbonEdge,
+      [0, 0.46, -1.46],
+      [-0.22, 0, 0],
+    ),
   );
+
+  for (const side of [-1, 1]) {
+    root.add(
+      mesh(new THREE.BoxGeometry(0.07, 0.68, 0.42), darkRed, [
+        side * 0.76,
+        0.4,
+        -1.56,
+      ]),
+      mesh(new THREE.BoxGeometry(0.04, 0.48, 0.3), carbon, [
+        side * 0.68,
+        0.38,
+        -1.5,
+      ]),
+      rod(
+        new THREE.Vector3(side * 0.3, 0.3, -1.42),
+        new THREE.Vector3(side * 0.7, 0.73, -1.52),
+        0.023,
+        carbonEdge,
+      ),
+    );
+  }
 
   root.add(
-    mesh(new THREE.BoxGeometry(1.84, 0.055, 0.3), carbon, [0, -0.24, 2.28]),
-    mesh(new THREE.BoxGeometry(1.62, 0.045, 0.22), warmWhite, [0, -0.15, 2.16]),
-    mesh(new THREE.BoxGeometry(0.06, 0.3, 0.48), carbonEdge, [-0.9, -0.08, 2.23]),
-    mesh(new THREE.BoxGeometry(0.06, 0.3, 0.48), carbonEdge, [0.9, -0.08, 2.23]),
-    mesh(new THREE.BoxGeometry(1.48, 0.09, 0.32), paint, [0, 0.66, -1.67]),
-    mesh(new THREE.BoxGeometry(1.36, 0.055, 0.25), carbon, [0, 0.51, -1.6]),
-    mesh(new THREE.BoxGeometry(0.065, 0.66, 0.42), carbonEdge, [-0.69, 0.35, -1.62]),
-    mesh(new THREE.BoxGeometry(0.065, 0.66, 0.42), carbonEdge, [0.69, 0.35, -1.62]),
-    mesh(new THREE.BoxGeometry(0.1, 0.55, 0.1), carbon, [-0.32, 0.27, -1.48]),
-    mesh(new THREE.BoxGeometry(0.1, 0.55, 0.1), carbon, [0.32, 0.27, -1.48]),
-    mesh(new THREE.BoxGeometry(0.13, 0.06, 0.05), redLight, [0, -0.03, -1.76]),
+    mesh(new THREE.BoxGeometry(0.16, 0.1, 0.08), redLight, [0, -0.02, -1.75]),
+    mesh(
+      verticalPlate(
+        [
+          [-1.72, -0.25],
+          [-1.48, 0.08],
+          [-1.08, 0.02],
+          [-1.35, -0.28],
+        ],
+        0.06,
+      ),
+      carbon,
+      [0, 0, 0],
+    ),
   );
 
+  for (const side of [-1, 1]) {
+    for (let diffuser = 0; diffuser < 3; diffuser += 1) {
+      root.add(
+        mesh(
+          new THREE.BoxGeometry(0.035, 0.21 + diffuser * 0.035, 0.72),
+          carbon,
+          [side * (0.26 + diffuser * 0.2), -0.17, -1.35],
+          [-0.18, 0, 0],
+        ),
+      );
+    }
+  }
+
   const wheelSpecs = [
-    { radius: 0.38, width: 0.27, x: 0.93, z: 1.34 },
-    { radius: 0.38, width: 0.27, x: -0.93, z: 1.34 },
-    { radius: 0.43, width: 0.36, x: 0.91, z: -1.15 },
-    { radius: 0.43, width: 0.36, x: -0.91, z: -1.15 },
+    { radius: 0.41, width: 0.29, x: 1.01, z: 1.42 },
+    { radius: 0.41, width: 0.29, x: -1.01, z: 1.42 },
+    { radius: 0.45, width: 0.38, x: 1, z: -1.17 },
+    { radius: 0.45, width: 0.38, x: -1, z: -1.17 },
   ];
 
-  for (const spec of wheelSpecs) {
+  wheelSpecs.forEach((spec) => {
     const wheelGroup = wheel(
       spec.radius,
       spec.width,
@@ -286,23 +790,87 @@ export function createF1CarModel(): F1CarModel {
       spec.z,
       tire,
       rim,
-      warmWhite,
+      alloy,
+      brake,
+      darkRed,
     );
     wheels.push(wheelGroup);
     root.add(wheelGroup);
-  }
+  });
 
   for (const side of [-1, 1]) {
-    const frontHub = new THREE.Vector3(side * 0.78, 0, 1.34);
-    const rearHub = new THREE.Vector3(side * 0.74, 0, -1.15);
+    const frontHub = new THREE.Vector3(side * 0.84, 0, 1.42);
+    const rearHub = new THREE.Vector3(side * 0.81, 0, -1.17);
     root.add(
-      rod(new THREE.Vector3(side * 0.25, -0.1, 1.02), frontHub, 0.018, carbonEdge),
-      rod(new THREE.Vector3(side * 0.28, 0.18, 1.08), frontHub, 0.018, carbonEdge),
-      rod(new THREE.Vector3(side * 0.34, -0.13, -0.82), rearHub, 0.021, carbonEdge),
-      rod(new THREE.Vector3(side * 0.38, 0.2, -0.89), rearHub, 0.021, carbonEdge),
+      rod(
+        new THREE.Vector3(side * 0.19, -0.12, 1.12),
+        frontHub,
+        0.018,
+        carbonEdge,
+      ),
+      rod(
+        new THREE.Vector3(side * 0.25, 0.22, 1.08),
+        frontHub,
+        0.018,
+        carbonEdge,
+      ),
+      rod(
+        new THREE.Vector3(side * 0.31, -0.1, -0.82),
+        rearHub,
+        0.021,
+        carbonEdge,
+      ),
+      rod(
+        new THREE.Vector3(side * 0.36, 0.23, -0.88),
+        rearHub,
+        0.021,
+        carbonEdge,
+      ),
+      rod(
+        new THREE.Vector3(side * 0.28, 0.06, 1.28),
+        new THREE.Vector3(side * 0.8, -0.08, 1.42),
+        0.014,
+        carbon,
+      ),
     );
   }
 
-  root.position.y = 0.02;
+  root.add(
+    rod(
+      new THREE.Vector3(0, 0.62, -0.78),
+      new THREE.Vector3(0, 0.87, -0.8),
+      0.035,
+      carbonEdge,
+    ),
+    scaledMesh(
+      new THREE.CapsuleGeometry(0.08, 0.18, 5, 14),
+      carbon,
+      [0, 0.91, -0.8],
+      [1.8, 0.45, 0.65],
+      [0, 0, Math.PI / 2],
+    ),
+    rod(
+      new THREE.Vector3(0, 0.27, 1.02),
+      new THREE.Vector3(0, 0.58, 1.04),
+      0.008,
+      carbonEdge,
+      6,
+    ),
+    rod(
+      new THREE.Vector3(0, 0.28, 0.93),
+      new THREE.Vector3(0, 0.47, 0.94),
+      0.006,
+      carbonEdge,
+      6,
+    ),
+  );
+
+  root.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+  root.position.y = 0.03;
   return { root, wheels };
 }

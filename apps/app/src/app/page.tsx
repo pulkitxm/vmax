@@ -61,11 +61,11 @@ export default function Home() {
           </div>
           <div
             className="hero-model-label"
-            aria-label="Interactive Formula 1 concept car model"
+            aria-label="Interactive Vmax Formula concept car model"
           >
-            <span>F1 concept model</span>
-            <strong>V/JQ-01</strong>
-            <small>Scroll controlled · WebGL</small>
+            <span>Formula concept model</span>
+            <strong>Vmax</strong>
+            <small>V/JQ-01 · Scroll controlled · WebGL</small>
           </div>
           <div className="scroll-cue" aria-hidden="true">
             <span>Scroll to rotate</span>
