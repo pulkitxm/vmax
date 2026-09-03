@@ -1,3 +1,5 @@
+import { MONZA } from "@/lib/circuits";
+
 export type BoostAction =
   "Attack" | "Eligibility push" | "Defend" | "Pressure" | "Hold";
 
@@ -31,55 +33,11 @@ export type LapStatus = {
   verdict: LapVerdict;
 };
 
-export const CIRCUIT = {
-  name: "Monza",
-  event: "Italian Grand Prix",
-  lengthKm: 5.793,
-  totalLaps: 57,
-  viewBox: "-24 -20 848 472",
-  path: [
-    "M 590 338",
-    "L 590 74",
-    "C 590 46 568 30 542 30",
-    "C 520 30 512 54 492 54",
-    "C 472 54 464 30 442 30",
-    "L 292 30",
-    "C 198 30 138 72 116 124",
-    "C 96 172 84 206 74 246",
-    "C 62 296 84 330 130 350",
-    "C 154 362 168 386 200 386",
-    "C 232 386 246 362 278 362",
-    "C 310 362 324 386 358 386",
-    "L 472 386",
-    "C 548 386 610 398 654 366",
-    "C 700 334 716 282 694 240",
-    "C 676 206 632 198 602 220",
-    "C 590 228 590 268 590 338",
-    "Z",
-  ].join(" "),
-};
-
-export const CIRCUIT_LANDMARKS = [
-  { pct: 0, label: "S/F", x: 548, y: 208 },
-  { pct: 8, label: "Rettifilo", x: 500, y: 16 },
-  { pct: 18, label: "Curva Grande", x: 310, y: 14 },
-  { pct: 28, label: "Roggia", x: 148, y: 58 },
-  { pct: 38, label: "Lesmo 1", x: 18, y: 148 },
-  { pct: 46, label: "Lesmo 2", x: 8, y: 240 },
-  { pct: 62, label: "Ascari", x: 188, y: 418 },
-  { pct: 82, label: "Parabolica", x: 668, y: 418 },
-  { pct: 92, label: "Main straight", x: 708, y: 248 },
-] as const;
-
-export const DETECTION_PCT = 76;
-export const OVERTAKE_ZONE = { startPct: 88, endPct: 98, label: "Overtake" };
-
-export const HARVEST_ZONES = [
-  { startPct: 7, endPct: 14, label: "T1 braking" },
-  { startPct: 26, endPct: 32, label: "Roggia" },
-  { startPct: 58, endPct: 66, label: "Ascari" },
-  { startPct: 78, endPct: 86, label: "Parabolica" },
-] as const;
+export const CIRCUIT = MONZA;
+export const CIRCUIT_LANDMARKS = MONZA.landmarks;
+export const DETECTION_PCT = MONZA.detectionPct;
+export const OVERTAKE_ZONE = MONZA.overtakeZone;
+export const HARVEST_ZONES = MONZA.harvestZones;
 
 export const SESSION = {
   circuit: CIRCUIT.name,
@@ -87,8 +45,6 @@ export const SESSION = {
   code: "004–023",
   car: "V/JQ-01",
   source: "Replay buffer",
-  windowStart: 38,
-  windowEnd: 51,
   totalLaps: CIRCUIT.totalLaps,
   projectedInstinct: "P8.1",
   projectedModel: "P7.2",
@@ -599,6 +555,255 @@ function verdictFor(deltaMs: number): LapVerdict {
   return "even";
 }
 
+const detailedLaps = new Map(
+  rawLaps.map((lap) => [lap.lap, lap] as const),
+);
+
+function racePosition(lap: number) {
+  if (lap <= 6) return 12;
+  if (lap <= 14) return 11;
+  if (lap <= 22) return 10;
+  if (lap <= 37) return 9;
+  if (lap <= 47) return 8;
+  if (lap === 48) return 7;
+  if (lap <= 50) return 6;
+  return 7;
+}
+
+function opponentFor(position: number, lap: number) {
+  const byPosition: Record<number, string[]> = {
+    12: ["Stroll"],
+    11: ["Gasly"],
+    10: ["Ocon", "Sainz"],
+    9: ["Sainz"],
+    8: ["Alonso"],
+    7: ["Leclerc", "Alonso"],
+    6: ["Russell"],
+  };
+  const options = byPosition[position] ?? ["Norris"];
+  return options[lap % options.length];
+}
+
+function energyForLap(lap: number) {
+  if (lap === 26) return 14;
+  if (lap === 27) return 74;
+  if (lap > 27) return Math.max(12, Math.round(78 - (lap - 27) * 2.1));
+  return Math.max(24, Math.round(90 - lap * 1.05));
+}
+
+function lapTimeBase(lap: number) {
+  const pitPenalty = lap === 26 ? 22400 : lap === 27 ? 1800 : 0;
+  const variation = ((lap * 73) % 520) - 260;
+  return 84180 + variation + pitPenalty;
+}
+
+function straightAttack(deploy = 0.82): {
+  instinct: BoostWindow[];
+  model: BoostWindow[];
+} {
+  return {
+    instinct: [
+      {
+        startPct: 86,
+        endPct: 96,
+        deploy,
+        zone: "Pit straight",
+        action: "Attack",
+      },
+    ],
+    model: [
+      {
+        startPct: 88,
+        endPct: 97,
+        deploy: deploy + 0.02,
+        zone: "Pit straight",
+        action: "Attack",
+      },
+    ],
+  };
+}
+
+function generateRawLap(lap: number): RawLap {
+  const override = detailedLaps.get(lap);
+  if (override) return override;
+
+  const position = racePosition(lap);
+  const opponent = opponentFor(position, lap);
+  const energyStart = energyForLap(lap);
+  const base = lapTimeBase(lap);
+  const pattern = lap % 6;
+
+  if (lap === 26) {
+    return {
+      lap,
+      position,
+      opponent,
+      energyStart,
+      lapTimeInstinctMs: base + 180,
+      lapTimeModelMs: base - 40,
+      instinct: [],
+      model: [],
+      note: "Pit entry lap. Both maps conserved boost while the car was in the lane.",
+    };
+  }
+
+  if (lap === 27) {
+    return {
+      lap,
+      position,
+      opponent,
+      energyStart,
+      lapTimeInstinctMs: base + 220,
+      lapTimeModelMs: base - 95,
+      instinct: [
+        {
+          startPct: 88,
+          endPct: 97,
+          deploy: 0.92,
+          zone: "Pit straight",
+          action: "Attack",
+        },
+      ],
+      model: [
+        {
+          startPct: 89,
+          endPct: 96,
+          deploy: 0.78,
+          zone: "Pit straight",
+          action: "Pressure",
+        },
+      ],
+      note: "Out-lap attack. Instinct spent hard off pit road; VMAX kept enough for the run to Sainz.",
+    };
+  }
+
+  if (pattern === 0) {
+    const { instinct, model } = straightAttack(0.76 + (lap % 3) * 0.04);
+    return {
+      lap,
+      position,
+      opponent,
+      energyStart,
+      lapTimeInstinctMs: base + 140,
+      lapTimeModelMs: base - 110,
+      instinct,
+      model,
+      note: "Routine straight attack. Instinct opened slightly early; VMAX timed the same window tighter.",
+    };
+  }
+
+  if (pattern === 1) {
+    return {
+      lap,
+      position,
+      opponent,
+      energyStart,
+      lapTimeInstinctMs: base + 35,
+      lapTimeModelMs: base + 20,
+      instinct: straightAttack(0.58).instinct,
+      model: straightAttack(0.56).model,
+      note: "Aligned lap. Instinct and VMAX agreed on a light straight press.",
+    };
+  }
+
+  if (pattern === 2) {
+    return {
+      lap,
+      position,
+      opponent,
+      energyStart,
+      lapTimeInstinctMs: base + 10,
+      lapTimeModelMs: base + 8,
+      instinct: [],
+      model: [],
+      note: "Harvest lap. Both maps banked energy through Ascari and Parabolica.",
+    };
+  }
+
+  if (pattern === 3) {
+    return {
+      lap,
+      position,
+      opponent,
+      energyStart,
+      lapTimeInstinctMs: base + 260,
+      lapTimeModelMs: base - 85,
+      instinct: [
+        {
+          startPct: 10,
+          endPct: 16,
+          deploy: 0.82,
+          zone: "Rettifilo exit",
+          action: "Attack",
+        },
+        ...straightAttack(0.88).instinct,
+      ],
+      model: [
+        {
+          startPct: 69,
+          endPct: 76,
+          deploy: 0.8,
+          zone: "Detection approach",
+          action: "Eligibility push",
+        },
+        ...straightAttack(0.86).model,
+      ],
+      note: "Greedy instinct lap. Extra boost before the straight cost more than it returned.",
+    };
+  }
+
+  if (pattern === 4) {
+    return {
+      lap,
+      position,
+      opponent,
+      energyStart,
+      lapTimeInstinctMs: base - 55,
+      lapTimeModelMs: base + 70,
+      instinct: [
+        {
+          startPct: 87,
+          endPct: 94,
+          deploy: 0.84,
+          zone: "Pit straight",
+          action: "Defend",
+        },
+      ],
+      model: [
+        {
+          startPct: 90,
+          endPct: 95,
+          deploy: 0.68,
+          zone: "Pit straight",
+          action: "Pressure",
+        },
+      ],
+      note: "Instinct defensive read landed earlier than the model threat estimate.",
+    };
+  }
+
+  return {
+    lap,
+    position,
+    opponent,
+    energyStart,
+    lapTimeInstinctMs: base + 95,
+    lapTimeModelMs: base - 130,
+    instinct: straightAttack(0.9).instinct,
+    model: [
+      {
+        startPct: 70,
+        endPct: 76,
+        deploy: 0.78,
+        zone: "Detection approach",
+        action: "Eligibility push",
+      },
+      ...straightAttack(0.84).model,
+    ],
+    note: "VMAX bought detection before the straight; instinct arrived one beat late.",
+  };
+}
+
 function enrich(lap: RawLap): LapStatus {
   const deltaMs = lap.lapTimeModelMs - lap.lapTimeInstinctMs;
   const timingErrorMs = meanTimingErrorMs(
@@ -617,7 +822,10 @@ function enrich(lap: RawLap): LapStatus {
   };
 }
 
-export const laps: LapStatus[] = rawLaps.map(enrich);
+export const laps: LapStatus[] = Array.from(
+  { length: SESSION.totalLaps },
+  (_, index) => enrich(generateRawLap(index + 1)),
+);
 
 export function formatLapTime(ms: number) {
   const minutes = Math.floor(ms / 60000);
@@ -730,4 +938,91 @@ export function summarizeSession(rows: LapStatus[] = laps) {
   };
 }
 
+function zoneForPct(pct: number) {
+  if (pct >= 84) return "Pit straight";
+  if (pct >= 66 && pct < 78) return "Detection approach";
+  if (pct >= 8 && pct < 18) return "Rettifilo exit";
+  const harvest = HARVEST_ZONES.find(
+    (zone) => pct >= zone.startPct && pct < zone.endPct,
+  );
+  return harvest?.label ?? "Track segment";
+}
+
+function aggregateWindows(
+  rows: LapStatus[],
+  source: "instinct" | "model",
+  minShare = 0.12,
+): BoostWindow[] {
+  const samples = 200;
+  const threshold = Math.max(1, Math.ceil(rows.length * minShare));
+  const counts = new Array(samples).fill(0);
+  const deploySums = new Array(samples).fill(0);
+
+  for (const lap of rows) {
+    const windows = source === "instinct" ? lap.instinct : lap.model;
+    for (let index = 0; index < samples; index += 1) {
+      const pct = (index / samples) * 100;
+      const window = windows.find(
+        (entry) => pct >= entry.startPct && pct < entry.endPct,
+      );
+      if (window) {
+        counts[index] += 1;
+        deploySums[index] += window.deploy;
+      }
+    }
+  }
+
+  const windows: BoostWindow[] = [];
+  let start = -1;
+
+  for (let index = 0; index <= samples; index += 1) {
+    const active = index < samples && counts[index] >= threshold;
+    if (active && start < 0) start = index;
+    if (!active && start >= 0) {
+      const sliceCounts = counts.slice(start, index);
+      const avgDeploy =
+        deploySums
+          .slice(start, index)
+          .reduce(
+            (sum, value, offset) => sum + value / Math.max(1, sliceCounts[offset]),
+            0,
+          ) / sliceCounts.length;
+      const startPct = (start / samples) * 100;
+      windows.push({
+        startPct,
+        endPct: (index / samples) * 100,
+        deploy: Number(Math.min(1, avgDeploy).toFixed(2)),
+        zone: zoneForPct(startPct),
+        action: startPct >= 80 ? "Attack" : "Pressure",
+      });
+      start = -1;
+    }
+  }
+
+  return windows;
+}
+
+export function aggregateSessionWindows(rows: LapStatus[] = laps) {
+  return {
+    instinct: aggregateWindows(rows, "instinct"),
+    model: aggregateWindows(rows, "model"),
+  };
+}
+
+export function boostShareAt(
+  rows: LapStatus[],
+  pct: number,
+  source: "instinct" | "model",
+) {
+  if (rows.length === 0) return 0;
+  const count = rows.filter((lap) => {
+    const windows = source === "instinct" ? lap.instinct : lap.model;
+    return windows.some(
+      (window) => pct >= window.startPct && pct < window.endPct,
+    );
+  }).length;
+  return Math.round((count / rows.length) * 100);
+}
+
 export const sessionSummary = summarizeSession();
+export const sessionWindows = aggregateSessionWindows();

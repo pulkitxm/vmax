@@ -6,10 +6,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import dash from "@/components/dashboard.module.css";
 import styles from "@/components/lap-review.module.css";
 import {
+  DATA_SECTIONS,
+  LAP_DATA_REFERENCE,
+} from "@/lib/lap-data-reference";
+import {
   CIRCUIT,
-  CIRCUIT_LANDMARKS,
-  DETECTION_PCT,
-  OVERTAKE_ZONE,
   SESSION,
   type BoostWindow,
   type LapStatus,
@@ -31,8 +32,6 @@ type MapMode = "overlay" | "split";
 
 const INSTINCT = "#f4c35a";
 const MODEL = "#39e7f2";
-const BOTH = "#64dfa4";
-const WASTE = "#ff3045";
 
 function sparkState(instinct: number, model: number) {
   if (instinct > 0.12 && model > 0.12) return "both";
@@ -69,20 +68,85 @@ function advantageCopy(lap: LapStatus) {
 function sessionAdvantageCopy() {
   const summary = sessionSummary;
   if (!summary.modelAhead) {
-    return `Across laps ${SESSION.windowStart}–${SESSION.windowEnd}, instinctive boosting was ${summary.advantageSeconds.toFixed(2)}s faster than the VMAX map.`;
+    return `Across all ${SESSION.totalLaps} laps, instinctive boosting was ${summary.advantageSeconds.toFixed(2)}s faster than the VMAX map.`;
   }
-  return `Across laps ${SESSION.windowStart}–${SESSION.windowEnd}, following VMAX instead of instinct was worth ${summary.advantageSeconds.toFixed(2)}s and a projected ${SESSION.projectedInstinct} → ${SESSION.projectedModel} lift.`;
+  return `Across all ${SESSION.totalLaps} laps, following VMAX instead of instinct was worth ${summary.advantageSeconds.toFixed(2)}s and a projected ${SESSION.projectedInstinct} → ${SESSION.projectedModel} lift.`;
+}
+
+function verdictLabel(lap: LapStatus) {
+  if (lap.verdict === "even") return "Even lap";
+  return `${lap.verdict === "vmax" ? "VMAX" : "Instinct"} ${formatDelta(lap.deltaMs)}s`;
+}
+
+function LapStatusPanel({ lap }: { lap: LapStatus }) {
+  const rows = [
+    ...lap.instinct.map((window) => ({ source: "instinct" as const, window })),
+    ...lap.model.map((window) => ({ source: "model" as const, window })),
+  ].sort((a, b) => a.window.startPct - b.window.startPct);
+
+  return (
+    <div className={styles.lapStatus}>
+      <div className={styles.lapStatusHead}>
+        <span>Lap status</span>
+        <strong className={styles.delta} data-verdict={lap.verdict}>
+          {verdictLabel(lap)}
+        </strong>
+      </div>
+      <p className={styles.lapStatusCopy}>{advantageCopy(lap)}</p>
+      {rows.length === 0 ? (
+        <p className={styles.lapStatusEmpty}>
+          No boost deployed — both maps conserved for a later attack.
+        </p>
+      ) : (
+        <div className={styles.lapStatusRows}>
+          {rows.map(({ source, window }) => {
+            const other = nearestWindow(
+              source === "instinct" ? lap.model : lap.instinct,
+              window.startPct,
+            );
+            const error = windowTimingErrorMs(
+              window,
+              other,
+              lap.lapTimeModelMs,
+            );
+            const matched =
+              other != null && Math.abs(other.startPct - window.startPct) < 8;
+            return (
+              <div
+                className={styles.lapStatusRow}
+                data-source={source}
+                key={`${source}-${window.startPct}-${window.action}`}
+              >
+                <em>{source === "instinct" ? "Instinct" : "VMAX"}</em>
+                <span>{window.zone}</span>
+                <b>{window.action}</b>
+                <span>{Math.round(window.deploy * 100)}%</span>
+                <span>
+                  {matched && error != null
+                    ? Math.abs(error) < 40
+                      ? "Aligned"
+                      : `${formatError(Math.abs(error))} ${error > 0 ? "early" : "late"}`
+                    : "Unmatched"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function BoostStrokes({
   windows,
   color,
-  width = 8,
+  width,
 }: {
   windows: BoostWindow[];
   color: string;
-  width?: number;
+  width: number;
 }) {
+  if (windows.length === 0) return null;
   return windows.map((window) => (
     <path
       className={styles.boostStroke}
@@ -92,8 +156,9 @@ function BoostStrokes({
       stroke={color}
       strokeDasharray={`${window.endPct - window.startPct} ${100 - (window.endPct - window.startPct)}`}
       strokeDashoffset={-window.startPct}
+      strokeLinecap="round"
       strokeWidth={width}
-      style={{ opacity: 0.45 + window.deploy * 0.5 }}
+      style={{ opacity: 0.65 + window.deploy * 0.35 }}
     />
   ));
 }
@@ -104,17 +169,16 @@ function CircuitMap({
   playhead,
   showInstinct,
   showModel,
-  showDiff,
 }: {
   instinct: BoostWindow[];
   model: BoostWindow[];
   playhead: number;
   showInstinct: boolean;
   showModel: boolean;
-  showDiff: boolean;
 }) {
   const pathRef = useRef<SVGPathElement>(null);
-  const [point, setPoint] = useState({ x: 590, y: 338 });
+  const [point, setPoint] = useState({ x: 250, y: 250 });
+  const boostWidth = CIRCUIT.trackStrokeWidth + 8;
 
   useEffect(() => {
     const node = pathRef.current;
@@ -124,59 +188,49 @@ function CircuitMap({
     setPoint({ x: next.x, y: next.y });
   }, [playhead]);
 
-  const wasted = showDiff
-    ? instinct.filter(
-        (window) =>
-          !model.some(
-            (other) =>
-              other.startPct < window.endPct && other.endPct > window.startPct,
-          ),
-      )
-    : [];
-
   return (
-    <svg
-      aria-hidden="true"
-      className={styles.circuit}
-      viewBox={CIRCUIT.viewBox}
-    >
-      <path className={styles.trackBase} d={CIRCUIT.path} />
-      <path className={styles.trackCore} d={CIRCUIT.path} ref={pathRef} />
-      {showInstinct && (
-        <BoostStrokes color={INSTINCT} width={8} windows={instinct} />
-      )}
-      {showModel && <BoostStrokes color={MODEL} width={6} windows={model} />}
-      {showDiff && <BoostStrokes color={WASTE} width={4} windows={wasted} />}
-      <path
-        d={CIRCUIT.path}
-        fill="none"
-        pathLength={100}
-        stroke={BOTH}
-        strokeDasharray="1.6 98.4"
-        strokeDashoffset={-DETECTION_PCT}
-        strokeWidth={14}
-      />
-      <path
-        d={CIRCUIT.path}
-        fill="none"
-        pathLength={100}
-        stroke="rgba(244,241,233,0.55)"
-        strokeDasharray={`${OVERTAKE_ZONE.endPct - OVERTAKE_ZONE.startPct} ${100 - (OVERTAKE_ZONE.endPct - OVERTAKE_ZONE.startPct)}`}
-        strokeDashoffset={-OVERTAKE_ZONE.startPct}
-        strokeWidth={2}
-      />
-      {CIRCUIT_LANDMARKS.map((mark) => (
-        <text
-          className={styles.landmark}
-          key={mark.label}
-          x={mark.x}
-          y={mark.y}
-        >
-          {mark.label}
-        </text>
-      ))}
-      <circle className={styles.playheadDot} cx={point.x} cy={point.y} r={7} />
-    </svg>
+    <div className={styles.circuitShell}>
+      <svg
+        aria-label={`${CIRCUIT.name} boost map`}
+        className={styles.circuitSvg}
+        role="img"
+        viewBox={CIRCUIT.viewBox}
+      >
+        <g transform="rotate(90 250 250)">
+          <path
+            className={styles.trackOuter}
+            d={CIRCUIT.path}
+            strokeWidth={CIRCUIT.trackStrokeWidth}
+          />
+          <path
+            className={styles.trackInner}
+            d={CIRCUIT.path}
+            strokeWidth={5}
+          />
+          <path
+            className={styles.pathGuide}
+            d={CIRCUIT.path}
+            ref={pathRef}
+            strokeWidth={CIRCUIT.trackStrokeWidth}
+          />
+          {showInstinct && (
+            <BoostStrokes
+              color={INSTINCT}
+              width={boostWidth}
+              windows={instinct}
+            />
+          )}
+          {showModel && (
+            <BoostStrokes
+              color={MODEL}
+              width={boostWidth - 2}
+              windows={model}
+            />
+          )}
+          <circle className={styles.playheadDot} cx={point.x} cy={point.y} r={5} />
+        </g>
+      </svg>
+    </div>
   );
 }
 
@@ -295,6 +349,43 @@ function EventRows({ lap }: { lap: LapStatus }) {
   });
 }
 
+function DataReference() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <article className={`${dash.panel} ${styles.dataRef}`}>
+      <button
+        aria-expanded={open}
+        className={styles.dataRefToggle}
+        onClick={() => setOpen((value) => !value)}
+        type="button"
+      >
+        <span>07 / Data reference</span>
+        <span>{open ? "Hide field guide" : "Show field guide"}</span>
+      </button>
+      {open && (
+        <div className={styles.dataRefBody}>
+          {DATA_SECTIONS.map((section) => (
+            <section className={styles.dataRefSection} key={section}>
+              <h3>{section}</h3>
+              <dl>
+                {LAP_DATA_REFERENCE.filter((field) => field.section === section).map(
+                  (field) => (
+                    <div className={styles.dataRefRow} key={field.label}>
+                      <dt>{field.label}</dt>
+                      <dd>{field.description}</dd>
+                    </div>
+                  ),
+                )}
+              </dl>
+            </section>
+          ))}
+        </div>
+      )}
+    </article>
+  );
+}
+
 export function LapReview() {
   const [filter, setFilter] = useState<FilterKey>("all");
   const [mode, setMode] = useState<MapMode>("overlay");
@@ -348,7 +439,7 @@ export function LapReview() {
         <div className={dash.sessionStrip}>
           <span>{SESSION.circuit}</span>
           <span>
-            Laps {SESSION.windowStart}–{SESSION.windowEnd} / {SESSION.totalLaps}
+            {SESSION.totalLaps} laps
           </span>
           <strong>{SESSION.projectedModel}</strong>
         </div>
@@ -371,7 +462,7 @@ export function LapReview() {
           <div className={dash.feedControl}>
             <span>Boost debrief</span>
             <strong>
-              {SESSION.circuit} · {visible.length} laps
+              {SESSION.circuit} · {SESSION.totalLaps} laps
             </strong>
           </div>
         </div>
@@ -400,7 +491,7 @@ export function LapReview() {
           <article className={`${dash.panel} ${styles.summaryCard}`}>
             <span>Laps in view</span>
             <strong>
-              {SESSION.windowStart}–{SESSION.windowEnd}
+              {visible.length} / {SESSION.totalLaps}
             </strong>
             <em>
               {filteredSummary.vmaxLaps} VMAX · {filteredSummary.instinctLaps}{" "}
@@ -551,6 +642,7 @@ export function LapReview() {
                 <small>Of lap distance</small>
               </div>
             </div>
+            <LapStatusPanel lap={selected} />
           </article>
         </div>
 
@@ -590,7 +682,6 @@ export function LapReview() {
                   instinct={selected.instinct}
                   model={selected.model}
                   playhead={playhead}
-                  showDiff
                   showInstinct
                   showModel
                 />
@@ -599,28 +690,26 @@ export function LapReview() {
               <>
                 <div className={styles.mapPane}>
                   <div className={styles.mapLabel}>
-                    <span>Experience & instinct</span>
+                    <span>Instinct · Lap {selected.lap}</span>
                     <b>{selected.instinct.length} windows</b>
                   </div>
                   <CircuitMap
                     instinct={selected.instinct}
                     model={[]}
                     playhead={playhead}
-                    showDiff={false}
                     showInstinct
                     showModel={false}
                   />
                 </div>
                 <div className={styles.mapPane}>
                   <div className={styles.mapLabel}>
-                    <span>VMAX predictive model</span>
+                    <span>VMAX · Lap {selected.lap}</span>
                     <b>{selected.model.length} windows</b>
                   </div>
                   <CircuitMap
                     instinct={[]}
                     model={selected.model}
                     playhead={playhead}
-                    showDiff={false}
                     showInstinct={false}
                     showModel
                   />
@@ -636,13 +725,10 @@ export function LapReview() {
             <span>
               <i data-swatch="model" /> VMAX boost
             </span>
-            <span>
-              <i data-swatch="waste" /> Instinct-only / wasted
-            </span>
-            <span>
-              <i data-swatch="both" /> Detection line
-            </span>
           </div>
+          <p className={styles.circuitCredit}>
+            Track layout · {CIRCUIT.layoutId} · julesr0y/f1-circuits-svg
+          </p>
 
           <div className={styles.playhead}>
             <input
@@ -681,24 +767,6 @@ export function LapReview() {
                 Model energy
                 <strong>{energyNow}%</strong>
               </div>
-            </div>
-          </div>
-
-          <div
-            className={styles.advantage}
-            data-ahead={selected.verdict !== "instinct"}
-          >
-            <div>
-              <span>Advantage on this lap</span>
-              <strong>
-                {selected.verdict === "even"
-                  ? "Even"
-                  : `${selected.verdict === "vmax" ? "VMAX" : "Instinct"} ${formatDelta(selected.deltaMs)}s`}
-              </strong>
-            </div>
-            <div>
-              <span>Why the maps diverge</span>
-              <p>{advantageCopy(selected)}</p>
             </div>
           </div>
         </article>
@@ -741,6 +809,8 @@ export function LapReview() {
           <EventRows lap={selected} />
         </article>
 
+        <DataReference />
+
         <footer className={dash.footer}>
           <span>{sessionAdvantageCopy()}</span>
           <span>
@@ -759,7 +829,7 @@ export function LapDebriefStrip() {
       <div>
         <div className={styles.debriefLabel}>09 / Session debrief</div>
         <p>
-          Across laps {SESSION.windowStart}–{SESSION.windowEnd}, VMAX is{" "}
+          Across all {SESSION.totalLaps} laps, VMAX is{" "}
           <strong>{summary.advantageSeconds.toFixed(2)}s</strong> ahead of
           instinctive boosting, with {summary.accuracy}% window overlap.
         </p>
