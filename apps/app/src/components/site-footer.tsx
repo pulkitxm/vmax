@@ -12,6 +12,7 @@ export function SiteFooter() {
       </div>
       <nav aria-label="Footer navigation">
         <Link href="/dashboard">Dashboard</Link>
+        <Link href="/laps">Lap status</Link>
         <Link href="/how-it-works">How it works</Link>
         <Link href="/docs">Documentation</Link>
         <Link href="/faq">FAQ</Link>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import styles from "@/components/dashboard.module.css";
+import { LapDebriefStrip } from "@/components/lap-review";
 
 type RiskMode = "robust" | "balanced" | "aggressive";
 type SourceMode = "live" | "replay";
@@ -510,6 +511,9 @@ export function Dashboard() {
           >
             <i /> {source}
           </button>
+          <Link className={styles.exitLink} href="/laps">
+            Lap status
+          </Link>
           <Link className={styles.exitLink} href="/">
             Exit <span aria-hidden="true">↗</span>
           </Link>
@@ -1158,6 +1162,8 @@ export function Dashboard() {
             </div>
           </article>
         </div>
+
+        <LapDebriefStrip />
 
         <footer className={styles.footer}>
           <span>Mock interface / No live vehicle commands</span>
